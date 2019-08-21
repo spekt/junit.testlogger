@@ -6,11 +6,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.5</TargetFramework>
-    <AssemblyName>Microsoft.VisualStudio.TestPlatform.Extension.NUnit.Xml.TestLogger</AssemblyName>
+    <AssemblyName>Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Label="Configuration">
-    <RootNamespace>Microsoft.VisualStudio.TestPlatform.Extension.NUnit.Xml.TestLogger</RootNamespace>
+    <RootNamespace>Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

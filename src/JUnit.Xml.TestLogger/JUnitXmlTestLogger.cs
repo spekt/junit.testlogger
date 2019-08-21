@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Spekt Contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Microsoft.VisualStudio.TestPlatform.Extension.NUnit.Xml.TestLogger
+namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 {
     using System;
     using System.Collections.Generic;
@@ -18,17 +18,17 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.NUnit.Xml.TestLogger
 
     [FriendlyName(FriendlyName)]
     [ExtensionUri(ExtensionUri)]
-    public class NUnitXmlTestLogger : ITestLoggerWithParameters
+    public class JUnitXmlTestLogger : ITestLoggerWithParameters
     {
         /// <summary>
         /// Uri used to uniquely identify the logger.
         /// </summary>
-        public const string ExtensionUri = "logger://Microsoft/TestPlatform/NUnitXmlLogger/v1";
+        public const string ExtensionUri = "logger://Microsoft/TestPlatform/JUnitXmlLogger/v1";
 
         /// <summary>
         /// Alternate user friendly string to uniquely identify the console logger.
         /// </summary>
-        public const string FriendlyName = "nunit";
+        public const string FriendlyName = "junit";
 
         public const string LogFilePathKey = "LogFilePath";
         public const string LogFileName = "LogFileName";
@@ -373,7 +373,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.NUnit.Xml.TestLogger
 #pragma warning disable CS0618 // Type or member is obsolete
 
             // Required since TestCase.Properties is a superset of TestCase.Traits
-            // Unfortunately not all NUnit properties are available as traits
+            // Unfortunately not all JUnit properties are available as traits
             var traitProperties = result.Properties.Where(t => t.Attributes.HasFlag(TestPropertyAttributes.Trait));
 
 #pragma warning restore CS0618 // Type or member is obsolete
@@ -382,7 +382,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.NUnit.Xml.TestLogger
             {
                 var propValue = result.GetPropertyValue(p);
 
-                if (p.Id == "NUnit.TestCategory")
+                if (p.Id == "JUnit.TestCategory")
                 {
                     var elements = CreatePropertyElement("Category", (string[])propValue);
 

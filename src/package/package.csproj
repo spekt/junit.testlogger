@@ -8,7 +8,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.5</TargetFramework>
     <Version>$(PackageVersion)</Version>
-    <AssemblyName>NUnitXml.TestLogger</AssemblyName>
+    <AssemblyName>JUnitXml.TestLogger</AssemblyName>
 
     <!-- This isn't an assembly -->
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -31,29 +31,29 @@
     <NoWarn>$(NoWarn);2008</NoWarn>
 
     <!-- Nuget pack configuration -->
-    <NuspecFile>bin\$(Configuration)\$(TargetFramework)\NUnitXml.TestLogger.nuspec</NuspecFile>
+    <NuspecFile>bin\$(Configuration)\$(TargetFramework)\JUnitXml.TestLogger.nuspec</NuspecFile>
     <NuspecProperties>version=$(Version)</NuspecProperties>
     <IncludeContentInPack>false</IncludeContentInPack>
     <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NUnit.Xml.TestLogger\NUnit.Xml.TestLogger.csproj" />
-    <ProjectReference Include="..\NUnit.Xml.TestLogger.TestAdapter\NUnit.Xml.TestLogger.TestAdapter.csproj" />
+    <ProjectReference Include="..\JUnit.Xml.TestLogger\JUnit.Xml.TestLogger.csproj" />
+    <ProjectReference Include="..\JUnit.Xml.TestLogger.TestAdapter\JUnit.Xml.TestLogger.TestAdapter.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="NUnitXml.TestLogger.props">
+    <Content Include="JUnitXml.TestLogger.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="NUnitXml.TestLogger.nuspec">
+    <Content Include="JUnitXml.TestLogger.nuspec">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <!--<Target Name="AfterBuild">-->
-    <!--<Copy SourceFiles="NUnitXml.TestLogger.props" DestinationFolder="build\netstandard1.0" SkipUnchangedFiles="true" />-->
-    <!--<Copy SourceFiles="NUnitXml.TestLogger.props" DestinationFolder="build\net45" SkipUnchangedFiles="true" />-->
+    <!--<Copy SourceFiles="JUnitXml.TestLogger.props" DestinationFolder="build\netstandard1.0" SkipUnchangedFiles="true" />-->
+    <!--<Copy SourceFiles="JUnitXml.TestLogger.props" DestinationFolder="build\net45" SkipUnchangedFiles="true" />-->
   <!--</Target>-->
 
   <!-- Prevent Csc from being called -->

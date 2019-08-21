@@ -1,7 +1,7 @@
 // Copyright (c) Spekt Contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace NUnit.Xml.TestLogger.AcceptanceTests
+namespace JUnit.Xml.TestLogger.AcceptanceTests
 {
     using System;
     using System.IO;
@@ -11,12 +11,12 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
-    public class NUnitTestLoggerAcceptanceTests
+    public class JUnitTestLoggerAcceptanceTests
     {
         private readonly string resultsFile;
         private readonly XDocument resultsXml;
 
-        public NUnitTestLoggerAcceptanceTests()
+        public JUnitTestLoggerAcceptanceTests()
         {
             this.resultsFile = Path.Combine(DotnetTestFixture.RootDirectory, "test-results.xml");
             this.resultsXml = XDocument.Load(this.resultsFile);
@@ -64,7 +64,7 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
             Assert.AreEqual("8", node.Attribute(XName.Get("inconclusive")).Value);
             Assert.AreEqual("6", node.Attribute(XName.Get("skipped")).Value);
             Assert.AreEqual("Failed", node.Attribute(XName.Get("result")).Value);
-            Assert.AreEqual("NUnit.Xml.TestLogger.NetCore.Tests.dll", node.Attribute(XName.Get("name")).Value);
+            Assert.AreEqual("JUnit.Xml.TestLogger.NetCore.Tests.dll", node.Attribute(XName.Get("name")).Value);
             Assert.AreEqual(DotnetTestFixture.TestAssembly, node.Attribute(XName.Get("fullname")).Value);
         }
 
@@ -72,7 +72,7 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
         public void TestResultFileShouldContainNamespaceTestSuiteForNetFull()
         {
             // Two namespaces in test asset are:
-            // NUnit.Xml.TestLogger.NetFull.Tests and NUnit.Xml.TestLogger.Tests2
+            // JUnit.Xml.TestLogger.NetFull.Tests and JUnit.Xml.TestLogger.Tests2
             var query = string.Format("/test-run//test-suite[@type='TestSuite' and @name='NetFull']");
             var node = this.resultsXml.XPathSelectElement(query);
 
@@ -83,14 +83,14 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
             Assert.AreEqual("4", node.Attribute(XName.Get("inconclusive")).Value);
             Assert.AreEqual("3", node.Attribute(XName.Get("skipped")).Value);
             Assert.AreEqual("Failed", node.Attribute(XName.Get("result")).Value);
-            Assert.AreEqual("NUnit.Xml.TestLogger.NetFull", node.Attribute(XName.Get("fullname")).Value);
+            Assert.AreEqual("JUnit.Xml.TestLogger.NetFull", node.Attribute(XName.Get("fullname")).Value);
         }
 
         [TestMethod]
         public void TestResultFileShouldContainNamespaceTestSuiteForTests2()
         {
             // Two namespaces in test asset are:
-            // NUnit.Xml.TestLogger.NetFull.Tests and NUnit.Xml.TestLogger.Tests2
+            // JUnit.Xml.TestLogger.NetFull.Tests and JUnit.Xml.TestLogger.Tests2
             var query = string.Format("/test-run//test-suite[@type='TestSuite' and @name='Tests2']");
             var node = this.resultsXml.XPathSelectElement(query);
 
@@ -101,16 +101,16 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
             Assert.AreEqual("4", node.Attribute(XName.Get("inconclusive")).Value);
             Assert.AreEqual("3", node.Attribute(XName.Get("skipped")).Value);
             Assert.AreEqual("Failed", node.Attribute(XName.Get("result")).Value);
-            Assert.AreEqual("NUnit.Xml.TestLogger.Tests2", node.Attribute(XName.Get("fullname")).Value);
+            Assert.AreEqual("JUnit.Xml.TestLogger.Tests2", node.Attribute(XName.Get("fullname")).Value);
         }
 
         [TestMethod]
-        [DataRow("NUnit.Xml.TestLogger.NetFull.Tests")]
-        [DataRow("NUnit.Xml.TestLogger.Tests2")]
+        [DataRow("JUnit.Xml.TestLogger.NetFull.Tests")]
+        [DataRow("JUnit.Xml.TestLogger.Tests2")]
         public void TestResultFileShouldContainPartsOfNamespaceTestSuite(string testNamespace)
         {
             // Two namespaces in test asset are:
-            // NUnit.Xml.TestLogger.NetFull.Tests and NUnit.Xml.TestLogger.Tests2
+            // JUnit.Xml.TestLogger.NetFull.Tests and JUnit.Xml.TestLogger.Tests2
             var fullName = string.Empty;
             foreach (var part in testNamespace.Split("."))
             {
@@ -127,7 +127,7 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
         [TestMethod]
         public void TestResultFileShouldContainTestCasePropertiesForTestWithPropertyAttributes()
         {
-            var testNamespace = "NUnit.Xml.TestLogger.NetFull.Tests";
+            var testNamespace = "JUnit.Xml.TestLogger.NetFull.Tests";
             var query = string.Format("/test-run//test-case[@fullname='{0}.UnitTest1.WithProperty']", testNamespace);
             var testCaseElement = this.resultsXml.XPathSelectElement(query);
             Assert.IsNotNull(testCaseElement, "test-case element");
@@ -145,7 +145,7 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
         [TestMethod]
         public void TestResultFileShouldNotContainTestCasePropertiesForTestWithNoPropertyAttributes()
         {
-            var testNamespace = "NUnit.Xml.TestLogger.NetFull.Tests";
+            var testNamespace = "JUnit.Xml.TestLogger.NetFull.Tests";
             var query = string.Format("/test-run//test-case[@fullname='{0}.UnitTest1.NoProperty']", testNamespace);
             var testCaseElement = this.resultsXml.XPathSelectElement(query);
             Assert.IsNotNull(testCaseElement, "test-case element");
@@ -157,7 +157,7 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
         [TestMethod]
         public void TestResultFileShouldContainTestCaseCategoryForTestWithCategory()
         {
-            var testNamespace = "NUnit.Xml.TestLogger.NetFull.Tests";
+            var testNamespace = "JUnit.Xml.TestLogger.NetFull.Tests";
             var query = string.Format("/test-run//test-case[@fullname='{0}.UnitTest1.WithCategory']", testNamespace);
             var testCaseElement = this.resultsXml.XPathSelectElement(query);
             Assert.IsNotNull(testCaseElement, "test-case element");
@@ -169,13 +169,13 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
             var propertyElement = propertiesElement.Element("property");
             Assert.IsNotNull(propertyElement, "property element");
             Assert.AreEqual("Category", propertyElement.Attribute("name")?.Value);
-            Assert.AreEqual("Nunit Test Category", propertyElement.Attribute("value")?.Value);
+            Assert.AreEqual("Junit Test Category", propertyElement.Attribute("value")?.Value);
         }
 
         [TestMethod]
         public void TestResultFileShouldNotContainTestCaseCategoryForTestWithMultipleCategory()
         {
-            var testNamespace = "NUnit.Xml.TestLogger.NetFull.Tests";
+            var testNamespace = "JUnit.Xml.TestLogger.NetFull.Tests";
             var query = string.Format("/test-run//test-case[@fullname='{0}.UnitTest1.MultipleCategories']", testNamespace);
             var testCaseElement = this.resultsXml.XPathSelectElement(query);
             Assert.IsNotNull(testCaseElement, "test-case element");
@@ -198,7 +198,7 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
         [TestMethod]
         public void TestResultFileShouldContainTestCaseCategoryAndPropertyForTestWithMultipleProperties()
         {
-            var testNamespace = "NUnit.Xml.TestLogger.NetFull.Tests";
+            var testNamespace = "JUnit.Xml.TestLogger.NetFull.Tests";
             var query = string.Format("/test-run//test-case[@fullname='{0}.UnitTest1.WithCategoryAndProperty']", testNamespace);
             var testCaseElement = this.resultsXml.XPathSelectElement(query);
             Assert.IsNotNull(testCaseElement, "test-case element");
@@ -210,7 +210,7 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
             // Verify first category
             var propertyElement = propertiesElement.XPathSelectElement("descendant::property[@name='Category']");
             Assert.IsNotNull(propertyElement, "property element");
-            Assert.AreEqual("NUnit Test Category", propertyElement.Attribute("value")?.Value);
+            Assert.AreEqual("JUnit Test Category", propertyElement.Attribute("value")?.Value);
 
             // Verify second property
             propertyElement = propertiesElement.XPathSelectElement("descendant::property[@name='Property name']");
@@ -221,7 +221,7 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
         [TestMethod]
         public void TestResultFileShouldContainTestCasePropertyForTestWithMultipleProperties()
         {
-            var testNamespace = "NUnit.Xml.TestLogger.NetFull.Tests";
+            var testNamespace = "JUnit.Xml.TestLogger.NetFull.Tests";
             var query = string.Format("/test-run//test-case[@fullname='{0}.UnitTest1.WithProperties']", testNamespace);
             var testCaseElement = this.resultsXml.XPathSelectElement(query);
             Assert.IsNotNull(testCaseElement, "test-case element");

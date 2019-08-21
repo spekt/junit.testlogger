@@ -1,7 +1,7 @@
 // Copyright (c) Spekt Contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Microsoft.VisualStudio.TestPlatform.Extension.NUnit.Xml.TestLogger
+namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 {
     using System;
     using System.Collections.Generic;

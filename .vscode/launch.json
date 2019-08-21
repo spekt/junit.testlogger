@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/test/NUnit.Xml.TestLogger.AcceptanceTests/bin/Debug/netcoreapp2.0/NUnit.Xml.TestLogger.AcceptanceTests.dll",
+            "program": "${workspaceFolder}/test/JUnit.Xml.TestLogger.AcceptanceTests/bin/Debug/netcoreapp2.0/JUnit.Xml.TestLogger.AcceptanceTests.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/test/NUnit.Xml.TestLogger.AcceptanceTests",
+            "cwd": "${workspaceFolder}/test/JUnit.Xml.TestLogger.AcceptanceTests",
             // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
             "console": "internalConsole",
             "stopAtEntry": false,

@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace NUnit.Xml.TestLogger.Tests2
+namespace JUnit.Xml.TestLogger.NetFull.Tests
 {
     [TestFixture]
     public class UnitTest1
@@ -29,6 +29,44 @@ namespace NUnit.Xml.TestLogger.Tests2
         [Test]
         [Ignore("ignore reason")]
         public void Ignored()
+        {
+        }
+
+        [Test]
+        [Property("Property name", "Property value")]
+        public void WithProperty()
+        {
+        }
+
+        [Test]
+        public void NoProperty()
+        {
+        }
+
+        [Test]
+        [Category("Junit Test Category")]
+        public void WithCategory()
+        {
+        }
+
+        [Test]
+        [Category("Category2")]
+        [Category("Category1")]
+        public void MultipleCategories()
+        {
+        }
+
+        [Test]
+        [Category("JUnit Test Category")]
+        [Property("Property name", "Property value")]
+        public void WithCategoryAndProperty()
+        {
+        }
+
+        [Test]
+        [Property("Property name", "Property value 1")]
+        [Property("Property name", "Property value 2")]
+        public void WithProperties()
         {
         }
     }

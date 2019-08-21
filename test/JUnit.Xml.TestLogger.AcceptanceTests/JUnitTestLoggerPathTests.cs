@@ -1,7 +1,7 @@
 // Copyright (c) Spekt Contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace NUnit.Xml.TestLogger.AcceptanceTests
+namespace JUnit.Xml.TestLogger.AcceptanceTests
 {
     using System;
     using System.IO;
@@ -11,9 +11,9 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
-    public class NUnitTestLoggerPathTests
+    public class JUnitTestLoggerPathTests
     {
-        public NUnitTestLoggerPathTests()
+        public JUnitTestLoggerPathTests()
         {
         }
 
@@ -28,8 +28,8 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
                     "..",
                     "..",
                     "assets",
-                    "NUnit.Xml.TestLogger.NetMulti.Tests"));
-            DotnetTestFixture.TestAssemblyName = "NUnit.Xml.TestLogger.NetMulti.Tests.dll";
+                    "JUnit.Xml.TestLogger.NetMulti.Tests"));
+            DotnetTestFixture.TestAssemblyName = "JUnit.Xml.TestLogger.NetMulti.Tests.dll";
             DotnetTestFixture.Execute("{assembly}.{framework}.test-results.xml");
         }
 
@@ -38,8 +38,8 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
         {
             string[] expectedResultsFiles = new string[]
             {
-                Path.Combine(DotnetTestFixture.RootDirectory, "NUnit.Xml.TestLogger.NetMulti.Tests.NETFramework46.test-results.xml"),
-                Path.Combine(DotnetTestFixture.RootDirectory, "NUnit.Xml.TestLogger.NetMulti.Tests.NETCoreApp20.test-results.xml")
+                Path.Combine(DotnetTestFixture.RootDirectory, "JUnit.Xml.TestLogger.NetMulti.Tests.NETFramework46.test-results.xml"),
+                Path.Combine(DotnetTestFixture.RootDirectory, "JUnit.Xml.TestLogger.NetMulti.Tests.NETCoreApp20.test-results.xml")
             };
             foreach (string resultsFile in expectedResultsFiles)
             {

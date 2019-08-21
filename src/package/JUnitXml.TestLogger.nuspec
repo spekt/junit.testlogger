@@ -1,0 +1,23 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>JunitXml.TestLogger</id>
+    <version>$version$</version>
+    <title>JunitXml.TestLogger</title>
+    <authors>codito,faizan2304,smadala,lahma</authors>
+    <owners>codito,faizan2304,smadala</owners>
+    <projectUrl>https://github.com/spekt/junit.testlogger</projectUrl>
+    <description>Xml logger for JUnit v3 compliant xml report when test is running with "dotnet test" or "dotnet vstest".</description>
+    <license type="expression">MIT</license>
+  </metadata>
+  <files>
+    <file src="Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger.dll" target="build\_common\" />
+    <file src="Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestAdapter.dll" target="build\_common\" />
+
+    <!-- Net Core -->
+    <file src="JunitXml.TestLogger.props" target="build\netstandard1.0\" />
+
+    <!-- Desktop -->
+    <file src="JunitXml.TestLogger.props" target="build\net45\" />
+  </files>
+</package>

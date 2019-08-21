@@ -1,7 +1,7 @@
 // Copyright (c) Spekt Contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace NUnit.Xml.TestLogger.AcceptanceTests
+namespace JUnit.Xml.TestLogger.AcceptanceTests
 {
     using System;
     using System.Diagnostics;
@@ -17,9 +17,9 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
                         "..",
                         "..",
                         "assets",
-                        "NUnit.Xml.TestLogger.NetCore.Tests"));
+                        "JUnit.Xml.TestLogger.NetCore.Tests"));
 
-        public static string TestAssemblyName { get; set; } = "NUnit.Xml.TestLogger.NetCore.Tests.dll";
+        public static string TestAssemblyName { get; set; } = "JUnit.Xml.TestLogger.NetCore.Tests.dll";
 
         public static string TestAssembly
         {
@@ -37,7 +37,7 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
         public static void Execute(string resultsFile)
         {
             var testProject = RootDirectory;
-            var testLogger = $"--logger:\"nunit;LogFilePath={resultsFile}\"";
+            var testLogger = $"--logger:\"junit;LogFilePath={resultsFile}\"";
 
             // Delete stale results file
             var testLogFile = Path.Combine(testProject, resultsFile);
@@ -84,7 +84,7 @@ namespace NUnit.Xml.TestLogger.AcceptanceTests
         public static void Execute(string resultsFileName, string filePath)
         {
             var testProject = RootDirectory;
-            var testLogger = $"--logger \"nunit;LogFileName={resultsFileName}\" --results-directory \"{filePath}\"";
+            var testLogger = $"--logger \"junit;LogFileName={resultsFileName}\" --results-directory \"{filePath}\"";
 
             // Log the contents of test output directory. Useful to verify if the logger is copied
             Console.WriteLine("------------");

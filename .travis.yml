@@ -5,7 +5,7 @@ matrix:
         - dotnet: 2.1
           mono: latest
 
-solution: nunit.testlogger.sln
+solution: junit.testlogger.sln
 
 script:
     - ./build.sh

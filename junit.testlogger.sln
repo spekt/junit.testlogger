@@ -5,17 +5,17 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DB72843C-27A3-4646-BE18-164E33702212}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NUnit.Xml.TestLogger", "src\NUnit.Xml.TestLogger\NUnit.Xml.TestLogger.csproj", "{D53B993F-BAA5-4DBA-AAE2-D44DC28D37B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JUnit.Xml.TestLogger", "src\JUnit.Xml.TestLogger\JUnit.Xml.TestLogger.csproj", "{D53B993F-BAA5-4DBA-AAE2-D44DC28D37B2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NUnit.Xml.TestLogger.TestAdapter", "src\NUnit.Xml.TestLogger.TestAdapter\NUnit.Xml.TestLogger.TestAdapter.csproj", "{72D6CC14-E2CE-4271-8CEE-FBEF8E6EC31D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JUnit.Xml.TestLogger.TestAdapter", "src\JUnit.Xml.TestLogger.TestAdapter\JUnit.Xml.TestLogger.TestAdapter.csproj", "{72D6CC14-E2CE-4271-8CEE-FBEF8E6EC31D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "package", "src\package\package.csproj", "{B07E01EB-F697-4D97-BBE2-C2C49B2EFBF3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{D244BD05-A6C4-4E04-A392-A21091E4597F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NUnit.Xml.TestLogger.AcceptanceTests", "test\NUnit.Xml.TestLogger.AcceptanceTests\NUnit.Xml.TestLogger.AcceptanceTests.csproj", "{A47EDBAD-CF86-4F2D-9CE6-02510954CE10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JUnit.Xml.TestLogger.AcceptanceTests", "test\JUnit.Xml.TestLogger.AcceptanceTests\JUnit.Xml.TestLogger.AcceptanceTests.csproj", "{A47EDBAD-CF86-4F2D-9CE6-02510954CE10}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NUnit.Xml.TestLogger.UnitTests", "test\NUnit.Xml.TestLogger.UnitTests\NUnit.Xml.TestLogger.UnitTests.csproj", "{FC0600B1-5E2E-4C19-AFD9-BF418A739E17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JUnit.Xml.TestLogger.UnitTests", "test\JUnit.Xml.TestLogger.UnitTests\JUnit.Xml.TestLogger.UnitTests.csproj", "{FC0600B1-5E2E-4C19-AFD9-BF418A739E17}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

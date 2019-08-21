@@ -6,8 +6,7 @@
   <Import Project="$(SourceRoot)scripts/settings.targets" />
 
   <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
-    <FrameworkPathOverride Condition="'$(OS)' != 'Windows_NT'">/usr/lib/mono/4.5/</FrameworkPathOverride>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
 
     <!-- Disable stylecop for test assets -->
     <StylecopEnabled>false</StylecopEnabled>
@@ -17,16 +16,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(NETTestSdkMinimumVersion)" />
     <PackageReference Include="NUnit" Version="$(NUnitVersion)" />
     <PackageReference Include="NUnit3TestAdapter" Version="$(NUnitTestAdapterVersion)" />
-    <PackageReference Include="NunitXml.TestLogger" Version="$(PackageVersion)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\NUnit.Xml.TestLogger.NetCore.Tests\UnitTest1.cs">
-      <Link>UnitTest1.cs</Link>
-    </Compile>
-    <Compile Include="..\NUnit.Xml.TestLogger.NetCore.Tests\UnitTest2.cs">
-      <Link>UnitTest2.cs</Link>
-    </Compile>
+    <PackageReference Include="JunitXml.TestLogger" Version="$(PackageVersion)" />
   </ItemGroup>
 
 </Project>

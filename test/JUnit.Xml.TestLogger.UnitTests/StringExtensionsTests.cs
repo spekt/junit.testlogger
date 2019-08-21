@@ -1,9 +1,9 @@
 // Copyright (c) Spekt Contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace NUnit.Xml.TestLogger.UnitTests
+namespace JUnit.Xml.TestLogger.UnitTests
 {
-    using Microsoft.VisualStudio.TestPlatform.Extension.NUnit.Xml.TestLogger;
+    using Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]

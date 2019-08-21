@@ -7,20 +7,20 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.5</TargetFramework>
-    <AssemblyName>Microsoft.VisualStudio.TestPlatform.Extension.NUnit.Xml.TestAdapter</AssemblyName>
+    <AssemblyName>Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestAdapter</AssemblyName>
 
     <!-- This project just links source code from another project. Disable static analysis. -->
     <StylecopEnabled>false</StylecopEnabled>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\NUnit.Xml.TestLogger\NUnitXmlTestLogger.cs">
-      <Link>NUnitXmlTestLogger.cs</Link>
+    <Compile Include="..\JUnit.Xml.TestLogger\JUnitXmlTestLogger.cs">
+      <Link>JUnitXmlTestLogger.cs</Link>
     </Compile>
-    <Compile Include="..\NUnit.Xml.TestLogger\StringExtensions.cs">
+    <Compile Include="..\JUnit.Xml.TestLogger\StringExtensions.cs">
       <Link>StringExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\NUnit.Xml.TestLogger\TestResultInfo.cs">
+    <Compile Include="..\JUnit.Xml.TestLogger\TestResultInfo.cs">
       <Link>TestResultInfo.cs</Link>
     </Compile>
   </ItemGroup>
