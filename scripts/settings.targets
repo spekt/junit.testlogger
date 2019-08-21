@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SourceRoot Condition="$(SourceRoot) == ''">$(MSBuildThisFileDirectory)../../</SourceRoot>
+    <SourcePrefix>2.1.0</SourcePrefix>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- Versioning is defined from the build script. Use a default dev build if it's not defined.
+         Sets the AssemblyVersion, AssemblyFileVersion and AssemblyInformationalVersion -->
+    <Version Condition="'$(Version)' == ''">$(SourcePrefix)-dev</Version>
+    <PackageVersion Condition="'$(PackageVersion)' == ''">$(SourcePrefix)-dev</PackageVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+
+    <!--
+    Make sure any documentation comments which are included in code get checked for syntax during the build, but do
+    not report warnings for missing comments.
+
+    CS1573: Parameter 'parameter' has no matching param tag in the XML comment for 'parameter' (but other parameters do)
+    CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member'
+    -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn),1573,1591,1712</NoWarn>
+
+    <!-- Show full paths for the warnings and errors -->
+    <GenerateFullPaths>true</GenerateFullPaths>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DefineConstants>$(DefineConstants);CODE_ANALYSIS</DefineConstants>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)dependencies.props" />
+
+  <!-- Common dependencies for all projects -->
+  <ItemGroup>
+    <AdditionalFiles Include="$(SourceRoot)scripts\stylecop.json">
+      <Link>stylecop.json</Link>
+    </AdditionalFiles>
+
+    <PackageReference Include="Stylecop.Analyzers" Condition="$(StylecopEnabled) == '' or $(StylecopEnabled) != 'false'">
+      <Version>$(StylecopVersion)</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- Test project settings -->
+  <Choose>
+    <When Condition="$(TestProject) == 'true'">
+      <ItemGroup>
+        <PackageReference Include="MSTest.TestFramework">
+          <Version>$(MSTestVersion)</Version>
+        </PackageReference>
+        <PackageReference Include="MSTest.TestAdapter">
+          <Version>$(MSTestVersion)</Version>
+        </PackageReference>
+        <PackageReference Include="Moq">
+          <Version>$(MoqVersion)</Version>
+        </PackageReference>
+        <PackageReference Include="Microsoft.NET.Test.Sdk">
+          <Version>$(NETTestSdkVersion)</Version>
+        </PackageReference>
+      </ItemGroup>
+    </When>
+  </Choose>
+
+  <!-- Code analysis settings -->
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>$(SourceRoot)scripts/stylecop.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="$(TestProject) == 'true'">$(SourceRoot)scripts/stylecop.test.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+</Project>

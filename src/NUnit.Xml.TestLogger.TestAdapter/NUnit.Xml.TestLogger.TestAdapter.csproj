@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <SourceRoot Condition="$(SourceRoot) == ''">..\..\</SourceRoot>
+  </PropertyGroup>
+  <Import Project="$(SourceRoot)scripts/settings.targets" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.5</TargetFramework>
+    <AssemblyName>Microsoft.VisualStudio.TestPlatform.Extension.NUnit.Xml.TestAdapter</AssemblyName>
+
+    <!-- This project just links source code from another project. Disable static analysis. -->
+    <StylecopEnabled>false</StylecopEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\NUnit.Xml.TestLogger\NUnitXmlTestLogger.cs">
+      <Link>NUnitXmlTestLogger.cs</Link>
+    </Compile>
+    <Compile Include="..\NUnit.Xml.TestLogger\StringExtensions.cs">
+      <Link>StringExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\NUnit.Xml.TestLogger\TestResultInfo.cs">
+      <Link>TestResultInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="15.5.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>

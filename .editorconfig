@@ -1,0 +1,9 @@
+# http://editorconfig.org
+root=true
+
+[*]
+trim_trailing_whitespace = true
+indent_style = space
+
+[*.cs]
+indent_size = 4
