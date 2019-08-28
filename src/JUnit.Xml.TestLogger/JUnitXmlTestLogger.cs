@@ -15,6 +15,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
     using Microsoft.VisualStudio.TestPlatform.ObjectModel;
     using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
     using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
+    using Newtonsoft.Json;
 
     [FriendlyName(FriendlyName)]
     [ExtensionUri(ExtensionUri)]
@@ -175,29 +176,41 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         /// </summary>
         internal void TestRunCompleteHandler(object sender, TestRunCompleteEventArgs e)
         {
-            List<TestResultInfo> resultList;
-            lock (this.resultsGuard)
+            Console.WriteLine("..");
+            Console.WriteLine("Hello from the JUNIT logger");
+            try
             {
-                resultList = this.results;
-                this.results = new List<TestResultInfo>();
+                List<TestResultInfo> resultList;
+                lock (this.resultsGuard)
+                {
+                    resultList = this.results;
+                    this.results = new List<TestResultInfo>();
+                }
+
+                var doc = new XDocument(this.CreateTestSuitesElement(resultList));
+
+                // Create directory if not exist
+                var loggerFileDirPath = Path.GetDirectoryName(this.outputFilePath);
+                if (!Directory.Exists(loggerFileDirPath))
+                {
+                    Directory.CreateDirectory(loggerFileDirPath);
+                }
+
+                using (var f = File.Create(this.outputFilePath))
+                {
+                    doc.Save(f);
+                }
+
+                var resultsFileMessage = string.Format(CultureInfo.CurrentCulture, "Results File: {0}", this.outputFilePath);
+                Console.WriteLine(resultsFileMessage);
             }
-
-            var doc = new XDocument(this.CreateTestRunElement(resultList));
-
-            // Create directory if not exist
-            var loggerFileDirPath = Path.GetDirectoryName(this.outputFilePath);
-            if (!Directory.Exists(loggerFileDirPath))
+            catch (Exception ex)
             {
-                Directory.CreateDirectory(loggerFileDirPath);
+                Console.WriteLine("Exception in the logger");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.Source);
+                throw;
             }
-
-            using (var f = File.Create(this.outputFilePath))
-            {
-                doc.Save(f);
-            }
-
-            var resultsFileMessage = string.Format(CultureInfo.CurrentCulture, "Results File: {0}", this.outputFilePath);
-            Console.WriteLine(resultsFileMessage);
         }
 
         private static TestSuite AggregateTestSuites(
@@ -255,152 +268,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                 Error = error,
                 Time = time
             };
-        }
-
-        private static TestSuite CreateFixture(IGrouping<string, TestResultInfo> resultsByType)
-        {
-            var element = new XElement("test-suite");
-
-            int total = 0;
-            int passed = 0;
-            int failed = 0;
-            int skipped = 0;
-            int inconclusive = 0;
-            int error = 0;
-            var time = TimeSpan.Zero;
-
-            foreach (var result in resultsByType)
-            {
-                switch (result.Outcome)
-                {
-                    case TestOutcome.Failed:
-                        failed++;
-                        break;
-
-                    case TestOutcome.Passed:
-                        passed++;
-                        break;
-
-                    case TestOutcome.Skipped:
-                        skipped++;
-                        break;
-                    case TestOutcome.None:
-                        inconclusive++;
-                        break;
-                }
-
-                total++;
-                time += result.Duration;
-
-                // Create test-case elements
-                element.Add(CreateTestCaseElement(result));
-            }
-
-            // Create test-suite element for the TestFixture
-            var name = resultsByType.Key.SubstringAfterDot();
-
-            element.SetAttributeValue("type", "TestFixture");
-            element.SetAttributeValue("name", name);
-            element.SetAttributeValue("fullname", resultsByType.Key);
-
-            element.SetAttributeValue("total", total);
-            element.SetAttributeValue("passed", passed);
-            element.SetAttributeValue("failed", failed);
-            element.SetAttributeValue("inconclusive", inconclusive);
-            element.SetAttributeValue("skipped", skipped);
-
-            var resultString = failed > 0 ? ResultStatusFailed : ResultStatusPassed;
-            element.SetAttributeValue("result", resultString);
-            element.SetAttributeValue("duration", time.TotalSeconds);
-
-            return new TestSuite
-            {
-                Element = element,
-                Name = name,
-                FullName = resultsByType.Key,
-                Total = total,
-                Passed = passed,
-                Failed = failed,
-                Inconclusive = inconclusive,
-                Skipped = skipped,
-                Error = error,
-                Time = time
-            };
-        }
-
-        private static XElement CreateTestCaseElement(TestResultInfo result)
-        {
-            var element = new XElement(
-                "test-case",
-                new XAttribute("name", result.Name),
-                new XAttribute("fullname", result.Type + "." + result.Method),
-                new XAttribute("methodname", result.Method),
-                new XAttribute("classname", result.Type),
-                new XAttribute("result", OutcomeToString(result.Outcome)),
-                new XAttribute("duration", result.Duration.TotalSeconds),
-                new XAttribute("asserts", 0),
-                CreatePropertiesElement(result.TestCase));
-
-            StringBuilder stdOut = new StringBuilder();
-            foreach (var m in result.Messages)
-            {
-                if (TestResultMessage.StandardOutCategory.Equals(m.Category, StringComparison.OrdinalIgnoreCase))
-                {
-                    stdOut.AppendLine(m.Text);
-                }
-            }
-
-            if (!string.IsNullOrWhiteSpace(stdOut.ToString()))
-            {
-                element.Add(new XElement("output", new XCData(stdOut.ToString())));
-            }
-
-            if (result.Outcome == TestOutcome.Failed)
-            {
-                element.Add(new XElement(
-                    "failure",
-                    new XElement("message", result.ErrorMessage.ReplaceInvalidXmlChar()),
-                    new XElement("stack-trace", result.ErrorStackTrace.ReplaceInvalidXmlChar())));
-            }
-
-            return element;
-        }
-
-        private static XElement CreatePropertiesElement(TestCase result)
-        {
-            var propertyElements = new HashSet<XElement>(result.Traits.Select(CreatePropertyElement));
-
-#pragma warning disable CS0618 // Type or member is obsolete
-
-            // Required since TestCase.Properties is a superset of TestCase.Traits
-            // Unfortunately not all JUnit properties are available as traits
-            var traitProperties = result.Properties.Where(t => t.Attributes.HasFlag(TestPropertyAttributes.Trait));
-
-#pragma warning restore CS0618 // Type or member is obsolete
-
-            foreach (var p in traitProperties)
-            {
-                var propValue = result.GetPropertyValue(p);
-
-                if (p.Id == "JUnit.TestCategory")
-                {
-                    var elements = CreatePropertyElement("Category", (string[])propValue);
-
-                    foreach (var element in elements)
-                    {
-                        propertyElements.Add(element);
-                    }
-                }
-            }
-
-            return propertyElements.Any()
-                ? new XElement("properties", propertyElements.Distinct())
-                : null;
-        }
-
-        private static XElement CreatePropertyElement(Trait trait)
-        {
-            return CreatePropertyElement(trait.Name, trait.Value).Single();
         }
 
         private static IEnumerable<XElement> CreatePropertyElement(string name, params string[] values)
@@ -501,60 +368,88 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             this.localStartTime = DateTime.UtcNow;
         }
 
-        private XElement CreateTestRunElement(List<TestResultInfo> results)
+        /*
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <testsuites id="20140612_170519" name="New_configuration (14/06/12 17:05:19)" tests="225" failures="1262" time="0.001">
+        <testsuite name="rspec" tests="2" skipped="0" failures="0" errors="0" time="0.001691" timestamp="2018-07-30T10:02:37+00:00" hostname="runner-7661726c-project-14-concurrent-0">
+            <properties>
+              <property name="seed" value="8528"/>
+            </properties>
+            <testcase classname="spec.string_helper_spec" name="StringHelper#concatenate when a is git and b is lab returns summary" file="./spec/string_helper_spec.rb" time="0.000287"></testcase>
+            <testcase time="0.000102" name="Test#subtract3 fails" file="./spec/test_spec.rb" classname="spec.test_spec">
+                <failure type="RSpec::Expectations::ExpectationNotMetError" message="expected: falsey value got: true">Failure/Error: expect(true).to be_falsy expected: falsey value got: true ./spec/test_spec.rb:66:in `block (3 levels) in <top (required)>'</failure>
+            </testcase>
+        </testsuite>
+     </testsuites>
+         */
+
+        private XElement CreateTestSuitesElement(List<TestResultInfo> results)
         {
-            var testSuites = from result in results
-                             group result by result.AssemblyPath
-                             into resultsByAssembly
-                             orderby resultsByAssembly.Key
-                             select this.CreateAssemblyElement(resultsByAssembly);
+            File.WriteAllText($@"C:\test\testoutput.json", JsonConvert.SerializeObject(results));
 
-            var element = new XElement("test-run", testSuites);
+            // <testsuites id="20140612_170519" name="New_configuration (14/06/12 17:05:19)" tests="225" failures="1262" time="0.001">
+            var assemblies = results.Select(x => x.AssemblyPath).Distinct().ToList();
+            var testsuiteElements = assemblies
+                .Select(a => this.CreateTestSuiteElement(results.Where(x => x.AssemblyPath == a).ToList()));
 
-            element.SetAttributeValue("id", 2);
+            var element = new XElement("testsuites", testsuiteElements);
 
-            element.SetAttributeValue("duration", results.Sum(x => x.Duration.TotalSeconds));
+            element.SetAttributeValue("name", "todo add name");
 
-            var total = testSuites.Sum(x => (int)x.Attribute("total"));
-
-            // TODO test case count is actually count before filtering
-            element.SetAttributeValue("testcasecount", total);
-            element.SetAttributeValue("total", total);
-            element.SetAttributeValue("passed", testSuites.Sum(x => (int)x.Attribute("passed")));
-
-            var failed = testSuites.Sum(x => (int)x.Attribute("failed"));
-            element.SetAttributeValue("failed", failed);
-            element.SetAttributeValue("inconclusive", testSuites.Sum(x => (int)x.Attribute("inconclusive")));
-            element.SetAttributeValue("skipped", testSuites.Sum(x => (int)x.Attribute("skipped")));
-
-            var resultString = failed > 0 ? ResultStatusFailed : ResultStatusPassed;
-            element.SetAttributeValue("result", resultString);
-
-            element.SetAttributeValue("start-time", this.localStartTime.ToString(DateFormat, CultureInfo.InvariantCulture));
-            element.SetAttributeValue("end-time", DateTime.UtcNow.ToString(DateFormat, CultureInfo.InvariantCulture));
+            element.SetAttributeValue("tests", results.Count);
+            element.SetAttributeValue("failures", results.Where(x => x.Outcome == TestOutcome.Failed).Count());
+            element.SetAttributeValue("time", results.Sum(x => x.Duration.TotalSeconds));
 
             return element;
         }
 
-        private XElement CreateAssemblyElement(IGrouping<string, TestResultInfo> resultsByAssembly)
+        private XElement CreateTestSuiteElement(List<TestResultInfo> results)
         {
-            var assemblyPath = resultsByAssembly.Key;
-            var fixtures = from resultsInAssembly in resultsByAssembly
-                           group resultsInAssembly by resultsInAssembly.Type
-                           into resultsByType
-                           orderby resultsByType.Key
-                           select CreateFixture(resultsByType);
-            var fixtureGroups = GroupTestSuites(fixtures);
-            var suite = AggregateTestSuites(
-                fixtureGroups,
-                "Assembly",
-                Path.GetFileName(assemblyPath),
-                assemblyPath);
+            // <testsuite name="rspec" tests="2" skipped="0" failures="0" errors="0" time="0.001691" timestamp="2018-07-30T10:02:37+00:00" hostname="runner-7661726c-project-14-concurrent-0">
+            var testCaseElements = results.Select(a => this.CreateTestCaseElement(a));
 
-            XElement errorsElement = new XElement("errors");
-            suite.Element.Add(errorsElement);
+            var element = new XElement("testsuite", testCaseElements);
 
-            return suite.Element;
+            element.SetAttributeValue("name", Path.GetFileName(results.First().AssemblyPath));
+
+            element.SetAttributeValue("tests", results.Count);
+            element.SetAttributeValue("skipped", results.Where(x => x.Outcome == TestOutcome.Skipped).Count());
+            element.SetAttributeValue("failures", results.Where(x => x.Outcome == TestOutcome.Failed).Count());
+            element.SetAttributeValue("errors", 0); // looks like this isn't supported by .net?
+            element.SetAttributeValue("time", results.Sum(x => x.Duration.TotalSeconds));
+            element.SetAttributeValue("timestamp", this.localStartTime.ToString(DateFormat, CultureInfo.InvariantCulture));
+            element.SetAttributeValue("hostname", results.First().TestCase.ExecutorUri);
+
+            return element;
+        }
+
+        private XElement CreateTestCaseElement(TestResultInfo result)
+        {
+            // <testcase classname="spec.string_helper_spec" name="StringHelper#concatenate when a is git and b is lab returns summary" file="./spec/string_helper_spec.rb" time="0.000287"></testcase>
+            // <testcase time="0.000102" name="Test#subtract3 fails" file="./spec/test_spec.rb" classname="spec.test_spec">
+            //       <failure type="RSpec::Expectations::ExpectationNotMetError" message="expected: falsey value got: true">Failure/Error: expect(true).to be_falsy expected: falsey value got: true ./spec/test_spec.rb:66:in `block (3 levels) in <top (required)>'</failure>
+            // </testcase>
+            var testcaseElement = new XElement("testcase");
+
+            testcaseElement.SetAttributeValue("classname", result.TestCase
+                .FullyQualifiedName
+                .Substring(0, result.TestCase.FullyQualifiedName.IndexOf(result.TestCase.DisplayName) - 1));
+            testcaseElement.SetAttributeValue("name", result.Name);
+            testcaseElement.SetAttributeValue("file", result.TestCase.Source);
+            testcaseElement.SetAttributeValue("time", result.Duration.TotalSeconds);
+
+            if (result.Outcome == TestOutcome.Failed)
+            {
+                var failureElement = new XElement("failure", result.ErrorStackTrace);
+
+                failureElement.SetAttributeValue("type", "failure"); // TODO are there failure types?
+                failureElement.SetAttributeValue("message", result.ErrorMessage);
+
+                testcaseElement.Add(failureElement);
+            }
+
+            return testcaseElement;
         }
 
         public class TestSuite
