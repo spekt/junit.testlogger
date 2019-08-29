@@ -35,210 +35,56 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
         }
 
         [TestMethod]
-        public void TestResultFileShouldContainTestRunInformation()
+        public void TestResultFileShouldContainTestSuitesInformation()
         {
-            var node = this.resultsXml.XPathSelectElement("/test-run");
+            var node = this.resultsXml.XPathSelectElement("/testsuites");
 
             Assert.IsNotNull(node);
-            Assert.AreEqual("48", node.Attribute(XName.Get("testcasecount")).Value);
-            Assert.AreEqual("20", node.Attribute(XName.Get("passed")).Value);
-            Assert.AreEqual("14", node.Attribute(XName.Get("failed")).Value);
-            Assert.AreEqual("8", node.Attribute(XName.Get("inconclusive")).Value);
-            Assert.AreEqual("6", node.Attribute(XName.Get("skipped")).Value);
-            Assert.AreEqual("Failed", node.Attribute(XName.Get("result")).Value);
-
-            // Start time and End time should be valid dates
-            Convert.ToDateTime(node.Attribute(XName.Get("start-time")).Value);
-            Convert.ToDateTime(node.Attribute(XName.Get("end-time")).Value);
-        }
-
-        [TestMethod]
-        public void TestResultFileShouldContainAssemblyTestSuite()
-        {
-            var node = this.resultsXml.XPathSelectElement("/test-run/test-suite[@type='Assembly']");
-
-            Assert.IsNotNull(node);
-            Assert.AreEqual("48", node.Attribute(XName.Get("total")).Value);
-            Assert.AreEqual("20", node.Attribute(XName.Get("passed")).Value);
-            Assert.AreEqual("14", node.Attribute(XName.Get("failed")).Value);
-            Assert.AreEqual("8", node.Attribute(XName.Get("inconclusive")).Value);
-            Assert.AreEqual("6", node.Attribute(XName.Get("skipped")).Value);
-            Assert.AreEqual("Failed", node.Attribute(XName.Get("result")).Value);
             Assert.AreEqual("JUnit.Xml.TestLogger.NetCore.Tests.dll", node.Attribute(XName.Get("name")).Value);
-            Assert.AreEqual(DotnetTestFixture.TestAssembly, node.Attribute(XName.Get("fullname")).Value);
+            Assert.AreEqual("48", node.Attribute(XName.Get("tests")).Value);
+            Assert.AreEqual("14", node.Attribute(XName.Get("failures")).Value);
+
+            Convert.ToDouble(node.Attribute(XName.Get("time")).Value);
         }
 
         [TestMethod]
-        public void TestResultFileShouldContainNamespaceTestSuiteForNetFull()
+        public void TestResultFileShouldContainTestSuiteInformation()
         {
-            // Two namespaces in test asset are:
-            // JUnit.Xml.TestLogger.NetFull.Tests and JUnit.Xml.TestLogger.Tests2
-            var query = string.Format("/test-run//test-suite[@type='TestSuite' and @name='NetFull']");
-            var node = this.resultsXml.XPathSelectElement(query);
+            var node = this.resultsXml.XPathSelectElement("/testsuites/testsuite");
 
             Assert.IsNotNull(node);
-            Assert.AreEqual("27", node.Attribute(XName.Get("total")).Value);
-            Assert.AreEqual("13", node.Attribute(XName.Get("passed")).Value);
-            Assert.AreEqual("7", node.Attribute(XName.Get("failed")).Value);
-            Assert.AreEqual("4", node.Attribute(XName.Get("inconclusive")).Value);
-            Assert.AreEqual("3", node.Attribute(XName.Get("skipped")).Value);
-            Assert.AreEqual("Failed", node.Attribute(XName.Get("result")).Value);
-            Assert.AreEqual("JUnit.Xml.TestLogger.NetFull", node.Attribute(XName.Get("fullname")).Value);
+            Assert.AreEqual("JUnit.Xml.TestLogger.NetCore.Tests.dll", node.Attribute(XName.Get("name")).Value);
+            Assert.AreEqual("executor://nunit3testexecutor/", node.Attribute(XName.Get("hostname")).Value);
+            Assert.AreEqual("48", node.Attribute(XName.Get("tests")).Value);
+            Assert.AreEqual("14", node.Attribute(XName.Get("failures")).Value);
+            Assert.AreEqual("6", node.Attribute(XName.Get("skipped")).Value);
+
+            // Errors is zero becasue we don't get errors as a test outcome from .net
+            Assert.AreEqual("0", node.Attribute(XName.Get("errors")).Value);
+
+            Convert.ToDouble(node.Attribute(XName.Get("time")).Value);
+            Convert.ToDateTime(node.Attribute(XName.Get("timestamp")).Value);
         }
 
         [TestMethod]
-        public void TestResultFileShouldContainNamespaceTestSuiteForTests2()
+        public void TestResultFileShouldContainTestCases()
         {
-            // Two namespaces in test asset are:
-            // JUnit.Xml.TestLogger.NetFull.Tests and JUnit.Xml.TestLogger.Tests2
-            var query = string.Format("/test-run//test-suite[@type='TestSuite' and @name='Tests2']");
-            var node = this.resultsXml.XPathSelectElement(query);
+            var node = this.resultsXml.XPathSelectElements("/testsuites/testsuite").Descendants();
+            var testcases = node.Where(x => x.Name.LocalName == "testcase").ToList();
 
+            // Check all test cases
             Assert.IsNotNull(node);
-            Assert.AreEqual("21", node.Attribute(XName.Get("total")).Value);
-            Assert.AreEqual("7", node.Attribute(XName.Get("passed")).Value);
-            Assert.AreEqual("7", node.Attribute(XName.Get("failed")).Value);
-            Assert.AreEqual("4", node.Attribute(XName.Get("inconclusive")).Value);
-            Assert.AreEqual("3", node.Attribute(XName.Get("skipped")).Value);
-            Assert.AreEqual("Failed", node.Attribute(XName.Get("result")).Value);
-            Assert.AreEqual("JUnit.Xml.TestLogger.Tests2", node.Attribute(XName.Get("fullname")).Value);
-        }
+            Assert.AreEqual(48, testcases.Count());
+            Assert.IsTrue(testcases.All(x => double.TryParse(x.Attribute("time").Value, out _)));
 
-        [TestMethod]
-        [DataRow("JUnit.Xml.TestLogger.NetFull.Tests")]
-        [DataRow("JUnit.Xml.TestLogger.Tests2")]
-        public void TestResultFileShouldContainPartsOfNamespaceTestSuite(string testNamespace)
-        {
-            // Two namespaces in test asset are:
-            // JUnit.Xml.TestLogger.NetFull.Tests and JUnit.Xml.TestLogger.Tests2
-            var fullName = string.Empty;
-            foreach (var part in testNamespace.Split("."))
-            {
-                var query = string.Format("/test-run//test-suite[@type='TestSuite' and @name='{0}']", part);
-                var node = this.resultsXml.XPathSelectElement(query);
-                fullName = fullName == string.Empty ? part : fullName + "." + part;
-
-                Assert.IsNotNull(node);
-                Assert.AreEqual("Failed", node.Attribute(XName.Get("result")).Value);
-                Assert.AreEqual(fullName, node.Attribute(XName.Get("fullname")).Value);
-            }
-        }
-
-        [TestMethod]
-        public void TestResultFileShouldContainTestCasePropertiesForTestWithPropertyAttributes()
-        {
-            var testNamespace = "JUnit.Xml.TestLogger.NetFull.Tests";
-            var query = string.Format("/test-run//test-case[@fullname='{0}.UnitTest1.WithProperty']", testNamespace);
-            var testCaseElement = this.resultsXml.XPathSelectElement(query);
-            Assert.IsNotNull(testCaseElement, "test-case element");
-
-            var propertiesElement = testCaseElement.Element("properties");
-            Assert.IsNotNull(propertiesElement, "properties element");
-            Assert.AreEqual(1, propertiesElement.Descendants().Count());
-
-            var propertyElement = propertiesElement.Element("property");
-            Assert.IsNotNull(propertyElement, "property element");
-            Assert.AreEqual("Property name", propertyElement.Attribute("name")?.Value);
-            Assert.AreEqual("Property value", propertyElement.Attribute("value")?.Value);
-        }
-
-        [TestMethod]
-        public void TestResultFileShouldNotContainTestCasePropertiesForTestWithNoPropertyAttributes()
-        {
-            var testNamespace = "JUnit.Xml.TestLogger.NetFull.Tests";
-            var query = string.Format("/test-run//test-case[@fullname='{0}.UnitTest1.NoProperty']", testNamespace);
-            var testCaseElement = this.resultsXml.XPathSelectElement(query);
-            Assert.IsNotNull(testCaseElement, "test-case element");
-
-            var propertiesElement = testCaseElement.Element("properties");
-            Assert.IsNull(propertiesElement, "properties element");
-        }
-
-        [TestMethod]
-        public void TestResultFileShouldContainTestCaseCategoryForTestWithCategory()
-        {
-            var testNamespace = "JUnit.Xml.TestLogger.NetFull.Tests";
-            var query = string.Format("/test-run//test-case[@fullname='{0}.UnitTest1.WithCategory']", testNamespace);
-            var testCaseElement = this.resultsXml.XPathSelectElement(query);
-            Assert.IsNotNull(testCaseElement, "test-case element");
-
-            var propertiesElement = testCaseElement.Element("properties");
-            Assert.IsNotNull(propertiesElement, "properties element");
-            Assert.AreEqual(1, propertiesElement.Descendants().Count());
-
-            var propertyElement = propertiesElement.Element("property");
-            Assert.IsNotNull(propertyElement, "property element");
-            Assert.AreEqual("Category", propertyElement.Attribute("name")?.Value);
-            Assert.AreEqual("Junit Test Category", propertyElement.Attribute("value")?.Value);
-        }
-
-        [TestMethod]
-        public void TestResultFileShouldNotContainTestCaseCategoryForTestWithMultipleCategory()
-        {
-            var testNamespace = "JUnit.Xml.TestLogger.NetFull.Tests";
-            var query = string.Format("/test-run//test-case[@fullname='{0}.UnitTest1.MultipleCategories']", testNamespace);
-            var testCaseElement = this.resultsXml.XPathSelectElement(query);
-            Assert.IsNotNull(testCaseElement, "test-case element");
-
-            var propertiesElement = testCaseElement.Element("properties");
-            Assert.IsNotNull(propertiesElement, "properties element");
-            Assert.AreEqual(2, propertiesElement.Descendants().Count());
-
-            // Verify first category
-            var propertyElement = propertiesElement.XPathSelectElement("descendant::property[@value='Category2']");
-            Assert.IsNotNull(propertyElement, "property element");
-            Assert.AreEqual("Category", propertyElement.Attribute("name")?.Value);
-
-            // Verify second category
-            propertyElement = propertiesElement.XPathSelectElement("descendant::property[@value='Category1']");
-            Assert.IsNotNull(propertyElement, "property element");
-            Assert.AreEqual("Category", propertyElement.Attribute("name")?.Value);
-        }
-
-        [TestMethod]
-        public void TestResultFileShouldContainTestCaseCategoryAndPropertyForTestWithMultipleProperties()
-        {
-            var testNamespace = "JUnit.Xml.TestLogger.NetFull.Tests";
-            var query = string.Format("/test-run//test-case[@fullname='{0}.UnitTest1.WithCategoryAndProperty']", testNamespace);
-            var testCaseElement = this.resultsXml.XPathSelectElement(query);
-            Assert.IsNotNull(testCaseElement, "test-case element");
-
-            var propertiesElement = testCaseElement.Element("properties");
-            Assert.IsNotNull(propertiesElement, "properties element");
-            Assert.AreEqual(2, propertiesElement.Descendants().Count());
-
-            // Verify first category
-            var propertyElement = propertiesElement.XPathSelectElement("descendant::property[@name='Category']");
-            Assert.IsNotNull(propertyElement, "property element");
-            Assert.AreEqual("JUnit Test Category", propertyElement.Attribute("value")?.Value);
-
-            // Verify second property
-            propertyElement = propertiesElement.XPathSelectElement("descendant::property[@name='Property name']");
-            Assert.IsNotNull(propertyElement, "property element");
-            Assert.AreEqual("Property value", propertyElement.Attribute("value")?.Value);
-        }
-
-        [TestMethod]
-        public void TestResultFileShouldContainTestCasePropertyForTestWithMultipleProperties()
-        {
-            var testNamespace = "JUnit.Xml.TestLogger.NetFull.Tests";
-            var query = string.Format("/test-run//test-case[@fullname='{0}.UnitTest1.WithProperties']", testNamespace);
-            var testCaseElement = this.resultsXml.XPathSelectElement(query);
-            Assert.IsNotNull(testCaseElement, "test-case element");
-
-            var propertiesElement = testCaseElement.Element("properties");
-            Assert.IsNotNull(propertiesElement, "properties element");
-            Assert.AreEqual(2, propertiesElement.Descendants().Count());
-
-            // Verify first category
-            var propertyElement = propertiesElement.XPathSelectElement("descendant::property[@value='Property value 1']");
-            Assert.IsNotNull(propertyElement, "property element");
-            Assert.AreEqual("Property name", propertyElement.Attribute("name")?.Value);
-
-            // Verify second property
-            propertyElement = propertiesElement.XPathSelectElement("descendant::property[@value='Property value 2']");
-            Assert.IsNotNull(propertyElement, "property element");
-            Assert.AreEqual("Property name", propertyElement.Attribute("name")?.Value);
+            // Check failures
+            Assert.AreEqual(14, testcases.Where(x => x.Descendants().Any()).Count());
+            Assert.IsTrue(testcases.Where(x => x.Descendants().Any())
+                                   .All(x => x.Descendants().Count() == 1));
+            Assert.IsTrue(testcases.Where(x => x.Descendants().Any())
+                                   .All(x => x.Descendants().First().Name.LocalName == "failure"));
+            Assert.IsTrue(testcases.Where(x => x.Descendants().Any())
+                                   .All(x => x.Descendants().First().Attribute("type").Value == "failure"));
         }
     }
 }

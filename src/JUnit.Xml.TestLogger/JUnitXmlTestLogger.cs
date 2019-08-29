@@ -15,7 +15,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
     using Microsoft.VisualStudio.TestPlatform.ObjectModel;
     using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
     using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
-    using Newtonsoft.Json;
 
     [FriendlyName(FriendlyName)]
     [ExtensionUri(ExtensionUri)]
@@ -176,8 +175,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         /// </summary>
         internal void TestRunCompleteHandler(object sender, TestRunCompleteEventArgs e)
         {
-            Console.WriteLine("..");
-            Console.WriteLine("Hello from the JUNIT logger");
             try
             {
                 List<TestResultInfo> resultList;
@@ -206,7 +203,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception in the logger");
+                Console.WriteLine("JUnitXmlTestLogger threw an exception.");
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.Source);
                 throw;
@@ -270,22 +267,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             };
         }
 
-        private static IEnumerable<XElement> CreatePropertyElement(string name, params string[] values)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException("message", nameof(name));
-            }
-
-            foreach (var value in values)
-            {
-                yield return new XElement(
-                "property",
-                new XAttribute("name", name),
-                new XAttribute("value", value));
-            }
-        }
-
         private static bool TryParseName(
             string testCaseName,
             out string metadataTypeName,
@@ -333,24 +314,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             return true;
         }
 
-        private static string OutcomeToString(TestOutcome outcome)
-        {
-            switch (outcome)
-            {
-                case TestOutcome.Failed:
-                    return ResultStatusFailed;
-
-                case TestOutcome.Passed:
-                    return "Passed";
-
-                case TestOutcome.Skipped:
-                    return "Skipped";
-
-                default:
-                    return "Inconclusive";
-            }
-        }
-
         private void InitializeImpl(TestLoggerEvents events, string outputPath)
         {
             events.TestRunMessage += this.TestMessageHandler;
@@ -369,7 +332,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         }
 
         /*
-
     <?xml version="1.0" encoding="UTF-8"?>
     <testsuites id="20140612_170519" name="New_configuration (14/06/12 17:05:19)" tests="225" failures="1262" time="0.001">
         <testsuite name="rspec" tests="2" skipped="0" failures="0" errors="0" time="0.001691" timestamp="2018-07-30T10:02:37+00:00" hostname="runner-7661726c-project-14-concurrent-0">
@@ -386,8 +348,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
         private XElement CreateTestSuitesElement(List<TestResultInfo> results)
         {
-            File.WriteAllText($@"C:\test\testoutput.json", JsonConvert.SerializeObject(results));
-
             // <testsuites id="20140612_170519" name="New_configuration (14/06/12 17:05:19)" tests="225" failures="1262" time="0.001">
             var assemblies = results.Select(x => x.AssemblyPath).Distinct().ToList();
             var testsuiteElements = assemblies
@@ -395,7 +355,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
             var element = new XElement("testsuites", testsuiteElements);
 
-            element.SetAttributeValue("name", "todo add name");
+            element.SetAttributeValue("name", Path.GetFileName(results.First().AssemblyPath));
 
             element.SetAttributeValue("tests", results.Count);
             element.SetAttributeValue("failures", results.Where(x => x.Outcome == TestOutcome.Failed).Count());
@@ -441,7 +401,10 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
             if (result.Outcome == TestOutcome.Failed)
             {
-                var failureElement = new XElement("failure", result.ErrorStackTrace);
+                var verboseFailure = result.ErrorMessage + "\r\nStack Trace:\r\n" + result.ErrorStackTrace;
+
+                // var failureElement = new XElement("failure", result.ErrorStackTrace);
+                var failureElement = new XElement("failure", verboseFailure);
 
                 failureElement.SetAttributeValue("type", "failure"); // TODO are there failure types?
                 failureElement.SetAttributeValue("message", result.ErrorMessage);
