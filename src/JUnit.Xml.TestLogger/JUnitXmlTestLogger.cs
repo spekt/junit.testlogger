@@ -30,16 +30,19 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         /// </summary>
         public const string FriendlyName = "junit";
 
+        // Dicionary keys for command line arguments.
         public const string LogFilePathKey = "LogFilePath";
-        public const string LogFileName = "LogFileName";
-
+        public const string LogFileNameKey = "LogFileName";
         public const string ResultDirectoryKey = "TestRunDirectory";
+        public const string MethodFormatKey = "MethodFormat";
+        public const string FailureBodyFormatKey = "FailureBodyFormat";
 
         private const string ResultStatusPassed = "Passed";
         private const string ResultStatusFailed = "Failed";
 
         private const string DateFormat = "yyyy-MM-ddT HH:mm:ssZ";
 
+        // Tokens to allow user to manipulate output file or directory names.
         private const string AssemblyToken = "{assembly}";
         private const string FrameworkToken = "{framework}";
 
@@ -48,6 +51,41 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
         private List<TestResultInfo> results;
         private DateTime localStartTime;
+
+        public enum MethodFormat
+        {
+            /// <summary>
+            /// The method format will be the method only (i.e. Class.Method())
+            /// </summary>
+            Default,
+
+            /// <summary>
+            /// The method format will include the class and method name (i.e. Class.Method())
+            /// </summary>
+            Class,
+
+            /// <summary>
+            /// The method format will include the namespace, class and method (i.e. Namespace.Class.Method())
+            /// </summary>
+            Full
+        }
+
+        public enum FailureBodyFormat
+        {
+            /// <summary>
+            /// The failure body will incldue only the error stack trace.
+            /// </summary>
+            Default,
+
+            /// <summary>
+            /// The failure body will incldue the Expected/Actual messages.
+            /// </summary>
+            Verbose
+        }
+
+        public MethodFormat MethodFormatOption { get; private set; } = MethodFormat.Default;
+
+        public FailureBodyFormat FailureBodyFormatOption { get; private set; } = FailureBodyFormat.Default;
 
         public static IEnumerable<TestSuite> GroupTestSuites(IEnumerable<TestSuite> suites)
         {
@@ -102,7 +140,12 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                 throw new ArgumentNullException(nameof(parameters));
             }
 
-            if (parameters.TryGetValue(LogFileName, out string outputPathName) && parameters.TryGetValue(ResultDirectoryKey, out string outputFileDirectory))
+            // Assist users with message about whether a CLI option was ignored.
+            var knownKeys = new List<string>() { ResultDirectoryKey, LogFilePathKey, LogFileNameKey, MethodFormatKey, FailureBodyFormatKey };
+            parameters.Where(x => knownKeys.Contains(x.Key) == false).ToList()
+                .ForEach(x => Console.WriteLine($"JunitXML Logger: The provided configuration item '{x.Key}' is not valid and will be ignored. Note, names are case sensitive."));
+
+            if (parameters.TryGetValue(LogFileNameKey, out string outputPathName) && parameters.TryGetValue(ResultDirectoryKey, out string outputFileDirectory))
             {
                 outputPathName = Path.Combine(outputFileDirectory, outputPathName);
                 this.InitializeImpl(events, outputPathName);
@@ -117,7 +160,43 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             }
             else
             {
-                throw new ArgumentException($"Expected {LogFilePathKey} or {DefaultLoggerParameterNames.TestRunDirectory} parameter", nameof(parameters));
+                throw new ArgumentException($"JunitXML Logger: Expected {LogFilePathKey} or {DefaultLoggerParameterNames.TestRunDirectory} parameter", nameof(parameters));
+            }
+
+            if (parameters.TryGetValue(MethodFormatKey, out string methodFormat))
+            {
+                if (string.Equals(methodFormat.Trim(), "Class", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.MethodFormatOption = MethodFormat.Class;
+                }
+                else if (string.Equals(methodFormat.Trim(), "Full", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.MethodFormatOption = MethodFormat.Full;
+                }
+                else if (string.Equals(methodFormat.Trim(), "Default", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.MethodFormatOption = MethodFormat.Default;
+                }
+                else
+                {
+                    Console.WriteLine($"JunitXML Logger: The provided Method Format '{methodFormat}' is not a recognized option. Using default");
+                }
+            }
+
+            if (parameters.TryGetValue(FailureBodyFormatKey, out string failureFormat))
+            {
+                if (string.Equals(failureFormat.Trim(), "Verbose", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.FailureBodyFormatOption = FailureBodyFormat.Verbose;
+                }
+                else if (string.Equals(failureFormat.Trim(), "Default", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.FailureBodyFormatOption = FailureBodyFormat.Default;
+                }
+                else
+                {
+                    Console.WriteLine($"JunitXML Logger: The provided Failure Body Format '{failureFormat}' is not a recognized option. Using default");
+                }
             }
         }
 
@@ -198,12 +277,12 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                     doc.Save(f);
                 }
 
-                var resultsFileMessage = string.Format(CultureInfo.CurrentCulture, "Results File: {0}", this.outputFilePath);
-                Console.WriteLine(resultsFileMessage);
+                var resultsFileMessage = string.Format(CultureInfo.CurrentCulture, "JunitXML Logger - Results File: {0}", this.outputFilePath);
+                Console.WriteLine(Environment.NewLine + resultsFileMessage);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("JUnitXmlTestLogger threw an exception.");
+                Console.WriteLine("JunitXML Logger: Threw an unhandeled exception. ");
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.Source);
                 throw;
@@ -392,19 +471,46 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             // </testcase>
             var testcaseElement = new XElement("testcase");
 
-            testcaseElement.SetAttributeValue("classname", result.TestCase
+            var namespaceClass = result.TestCase
                 .FullyQualifiedName
-                .Substring(0, result.TestCase.FullyQualifiedName.IndexOf(result.TestCase.DisplayName) - 1));
-            testcaseElement.SetAttributeValue("name", result.Name);
+                .Substring(0, result.TestCase.FullyQualifiedName.IndexOf(result.TestCase.DisplayName) - 1);
+
+            var className = namespaceClass.Substring(namespaceClass.LastIndexOf('.') + 1);
+
+            testcaseElement.SetAttributeValue("classname", namespaceClass);
+
+            if (this.MethodFormatOption == MethodFormat.Full)
+            {
+                testcaseElement.SetAttributeValue("name", namespaceClass + "." + result.Name);
+            }
+            else if (this.MethodFormatOption == MethodFormat.Class)
+            {
+                testcaseElement.SetAttributeValue("name", className + "." + result.Name);
+            }
+            else
+            {
+                testcaseElement.SetAttributeValue("name", result.Name);
+            }
+
             testcaseElement.SetAttributeValue("file", result.TestCase.Source);
             testcaseElement.SetAttributeValue("time", result.Duration.TotalSeconds);
 
             if (result.Outcome == TestOutcome.Failed)
             {
-                var verboseFailure = result.ErrorMessage + "\r\nStack Trace:\r\n" + result.ErrorStackTrace;
+                var failureBodySB = new StringBuilder();
 
-                // var failureElement = new XElement("failure", result.ErrorStackTrace);
-                var failureElement = new XElement("failure", verboseFailure);
+                if (this.FailureBodyFormatOption == FailureBodyFormat.Verbose)
+                {
+                    failureBodySB.AppendLine(result.ErrorMessage);
+
+                    // Stack trace included to mimic the normal test output
+                    failureBodySB.AppendLine("Stack Trace:");
+                    File.WriteAllText(@"C:\temp\junitlogger", "BodyVerbose");
+                }
+
+                failureBodySB.AppendLine(result.ErrorStackTrace);
+
+                var failureElement = new XElement("failure", failureBodySB.ToString());
 
                 failureElement.SetAttributeValue("type", "failure"); // TODO are there failure types?
                 failureElement.SetAttributeValue("message", result.ErrorMessage);

@@ -36,4 +36,8 @@
     </Reference>
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <!--<Exec Command="xcopy $(OutDir)Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestAdapter.dll $(SolutionDir)..\ci_cd_test\ci_cd\ /Y&#xD;&#xA;" />-->
+  </Target>
+
 </Project>

@@ -10,6 +10,12 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
     using System.Xml.XPath;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Acceptance tests evaluate the most recent output of the build.ps1 script, NOT the most
+    /// recent build performed by visual studio or dotnet.build
+    ///
+    /// These acceptance tests look at the specific structure and contents of the produced Xml.
+    /// </summary>
     [TestClass]
     public class JUnitTestLoggerAcceptanceTests
     {
