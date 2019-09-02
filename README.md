@@ -40,13 +40,43 @@ After the logger name, command line arguments are provided as key/value pairs wi
 > dotnet test --test-adapter-path:. --logger:"junit;key1=value1;key2=value2"
 ```
 
-| Key | Sample Values | Comments | 
-| --- | ------------- | -------- |
-|   LogFilePath  |       artifacts\test-output.xml <br> artifacts\{framework}\{assembly}-test-results.xml <br> ..\artifacts\{assembly}-test-results.xml        |    Specify the path and file relative to the .csproj file for each test project.  <br> **Note** This option is not compatible with LogFileName or TestRunDirectory   |
-|   LogFileName  |       test-output.xml <br> {framework}-{assembly}-test-results.xml        |  Specify the file name. Unless the TestRunDirectory is specified the file will be stored in the default TestResult directory, relative to the test csproj file.         |
-|   TestRunDirectory  |    artifacts <br> artifacts\{framework} \           |      Specify the directory, absolute or relative to the test csproj file. If the file name is not specified, it will be TestResults.xml    |
-|   MethodFormat  |       Default <br> Class <br> Full        |  This option alters the testcase name attribute. By default, this contains only the method. Class, will add the class to the name. Full, will add the assembly/namespace/class to the method. See [here](/docs/gitlab-recommendation.md) for an example of why this might be useful.        |
-|   FailureBodyFormat  |    Default <br> Verbose           |     When set to default, the body will contain only the exception which is captured by vstest. Verbose will prepend the body with 'Expected X, Actual Y' similar to how it is displayed in the standard test output. 'Expected X, Actual Y' are normally only contained in the failure message. See [here](/docs/gitlab-recommendation.md) for an example of why this might be useful.    |
+####   LogFilePath  
+Specify the path and file relative to the .csproj file for each test project.  <br> **Note** This option is not compatible with LogFileName or TestRunDirectory  
+##### Examples 
+* artifacts\\test-output.xml 
+* artifacts\\{framework}\\{assembly}-test-results.xml 
+* ..\\artifacts\\{assembly}-test-results.xml   
+
+####  LogFileName  
+Specify the file name. Unless the TestRunDirectory is specified the file will be stored in the default TestResult directory, relative to the test csproj file.         
+##### Examples
+* test-output.xml 
+* {framework}-{assembly}-test-results.xml        
+
+####   TestRunDirectory  
+Specify the directory, absolute or relative to the test csproj file. If the file name is not specified, it will be TestResults.xml    
+
+##### Examples
+* artifacts\\
+* artifacts\\{framework}\           
+
+####   MethodFormat 
+This option alters the testcase name attribute. By default, this contains only the method. Class, will add the class to the name. Full, will add the assembly/namespace/class to the method. See [here](/docs/gitlab-recommendation.md) for an example of why this might be useful.       
+
+##### Allowed Values
+* Default
+* Class
+* Full        
+
+####   FailureBodyFormat  
+When set to default, the body will contain only the exception which is captured by vstest. Verbose will prepend the body with 'Expected X, Actual Y' similar to how it is displayed in the standard test output. 'Expected X, Actual Y' are normally only contained in the failure message. See [here](/docs/gitlab-recommendation.md) for an example of why this might be useful.    
+
+##### Allowed Values
+* Default
+* Verbose          
+
+
+### Saving Multiple Result Files In One Directory
 
 By default, every test project generates an xml report with the same directory and file name. The tokens {framework} and {assembly} may be placed anywhere in the directory or file names to customize the output location. This is **critical**, when multiple test reports will be written to the same directory, as in the following example. Otherwise, the second output file written would overwrite the first. 
 
