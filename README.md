@@ -1,6 +1,7 @@
 # JUnit Test Logger
-JUnit xml report extension for [Visual Studio Test Platform](https://gtihub.com/microsoft/vstest).
+JUnit xml report extension for [Visual Studio Test Platform](https://github.com/microsoft/vstest).
 
+**TODO** Add travis/appveyor
 <!-- [![Build Status](https://travis-ci.com/spekt/junit.testlogger.svg?branch=master)](https://travis-ci.com/spekt/junit.testlogger)
 [![Build status](https://ci.appveyor.com/api/projects/status/2masybxty5kve2dc?svg=true)](https://ci.appveyor.com/project/spekt/junit-testlogger) -->
 
@@ -15,7 +16,9 @@ If you're looking for `Junit`, `xunit` or `appveyor` loggers, visit following re
 * <https://github.com/spekt/appveyor.testlogger>
 
 ## Usage
-JUnit logger can generate xml reports in the JUnit v3 format (https://github.com/junit/docs/wiki/Test-Result-XML-Format).
+JUnit logger can generate xml reports in the JUnit format. The JUnit format seems to be variable across different implementations, with the JUnit 5 repository referring to the [Ant Junit Format](https://github.com/windyroad/JUnit-Schema) as a de-facto standard. This project does not implement that standard exactly. Please [refer to a sample file](docs/assets/TestResults.xml) to see an example of which parts of the format have been implemented. If you find that this format is missing some featur required by your CI/CD system, please open an issue.
+
+### Default Behavior
 
 1. Add a reference to the [JUnit Logger](https://www.nuget.org/packages/JUnitXml.TestLogger) nuget package in test project
 2. Use the following command line in tests
@@ -23,6 +26,16 @@ JUnit logger can generate xml reports in the JUnit v3 format (https://github.com
 > dotnet test --test-adapter-path:. --logger:junit
 ```
 3. Test results are generated in the `TestResults` directory relative to the `test.csproj`
+
+### Customizing Output
+
+There are several options to customize the output file name, location, and contents. 
+
+Platform Specific Recommendations:
+* [GitLab CI/CD Recomendation](/docs/gitlab-recommendation.md)
+
+
+
 
 A path for the report file can be specified as follows:
 ```
