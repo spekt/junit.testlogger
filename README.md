@@ -10,7 +10,7 @@ JUnit xml report extension for [Visual Studio Test Platform](https://github.com/
 | ------ | -------------- | ------------------- |
 | JUnit | [![NuGet](https://img.shields.io/nuget/v/JUnitXml.TestLogger.svg)](https://www.nuget.org/packages/JUnitXml.TestLogger/) | [![MyGet Pre Release](https://img.shields.io/myget/spekt/vpre/junitxml.testlogger.svg)](https://www.myget.org/feed/spekt/package/nuget/JunitXml.TestLogger) | -->
 
-If you're looking for `Junit`, `xunit` or `appveyor` loggers, visit following repositories:
+If you're looking for `Nunit`, `Xunit` or `appveyor` loggers, visit following repositories:
 * <https://github.com/spekt/nunit.testlogger>
 * <https://github.com/spekt/xunit.testlogger>
 * <https://github.com/spekt/appveyor.testlogger>
@@ -78,7 +78,7 @@ When set to default, the body will contain only the exception which is captured 
 
 ### Saving Multiple Result Files In One Directory
 
-By default, every test project generates an xml report with the same directory and file name. The tokens {framework} and {assembly} may be placed anywhere in the directory or file names to customize the output location. This is **critical**, when multiple test reports will be written to the same directory, as in the following example. Otherwise, the second output file written would overwrite the first. 
+By default, every test project generates an xml report with the same directory and file name. The tokens {framework} and {assembly} may be placed anywhere in the directory or file names to customize the output location. This is **critical**, when multiple test reports will be written to the same directory, as in the following example. Otherwise, the files would use identical names, and the second output file written would overwrite the first. 
 
 ```
 Start:
