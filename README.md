@@ -48,7 +48,23 @@ After the logger name, command line arguments are provided as key/value pairs wi
 |   MethodFormat  |       Default <br> Class <br> Full        |  This option alters the testcase name attribute. By default, this contains only the method. Class, will add the class to the name. Full, will add the assembly/namespace/class to the method. See [here](/docs/gitlab-recommendation.md) for an example of why this might be useful.        |
 |   FailureBodyFormat  |    Default <br> Verbose           |     When set to default, the body will contain only the exception which is captured by vstest. Verbose will prepend the body with 'Expected X, Actual Y' similar to how it is displayed in the standard test output. 'Expected X, Actual Y' are normally only contained in the failure message. See [here](/docs/gitlab-recommendation.md) for an example of why this might be useful.    |
 
-By default, every test project generates an xml report with the same directory and file name. The tokens {framework} and {assembly} may be placed anywhere in the directory or file names to customize the output location. This is **critical**, when multiple test reports will be written to the same directory, as in the following example:
+By default, every test project generates an xml report with the same directory and file name. The tokens {framework} and {assembly} may be placed anywhere in the directory or file names to customize the output location. This is **critical**, when multiple test reports will be written to the same directory, as in the following example. Otherwise, the second output file written would overwrite the first. 
+
+```
+Start:
+.\Solution\MySolution.sln
+     ﾤ----\TestLib1\TestLib1.csproj
+     ﾤ----\TestLib2\TestLib2.csproj
+     
+Run Tests:     
+ > dotnet test --test-adapter-path:. --logger:"junit;LogFilePath=..\artifacts\{assembly}-test-results.xml"   
+     
+New Files:     
+.\Solution\
+     ﾤ----\artifacts\
+               ﾤ----\TestLib1-test-results.xml
+               ﾤ----\TestLib2-test-results.xml               
+```
 
 ## License
 MIT
