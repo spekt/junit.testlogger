@@ -25,7 +25,7 @@ JUnit logger can generate xml reports in the JUnit format. The JUnit format seem
 ```
 > dotnet test --test-adapter-path:. --logger:junit
 ```
-3. Test results are generated in the `TestResults` directory relative to the `test.csproj`
+3. Test results are generated in the `TestResults` directory relative to each `test.csproj` file.
 
 ### Customizing Output
 
@@ -34,17 +34,21 @@ There are several options to customize the output file name, location, and conte
 Platform Specific Recommendations:
 * [GitLab CI/CD Recomendation](/docs/gitlab-recommendation.md)
 
+After the logger name, command line arguments are provided as key/value pairs with the following general format. **Note** the quotes are required and key names are case sensitive. In case of issues, review the command line output for error messages. 
 
-
-
-A path for the report file can be specified as follows:
 ```
-> dotnet test --test-adapter-path:. --logger:"junit;LogFilePath=test-result.xml"
+> dotnet test --test-adapter-path:. --logger:"junit;key1=value1;key2=value2"
 ```
 
-`test-result.xml` will be generated in the same directory as `test.csproj`.
+| Key | Sample Values | Comments | 
+| --- | ------------- | -------- |
+|   LogFilePath  |       artifacts\test-output.xml <br> artifacts\{framework}\{assembly}-test-results.xml <br> ..\artifacts\{assembly}-test-results.xml        |    Specify the path and file relative to the .csproj file for each test project.  <br> **Note** This option is not compatible with LogFileName or TestRunDirectory   |
+|   LogFileName  |       test-output.xml <br> {framework}-{assembly}-test-results.xml        |  Specify the file name. Unless the TestRunDirectory is specified the file will be stored in the default TestResult directory, relative to the test csproj file.         |
+|   TestRunDirectory  |    artifacts <br> artifacts\{framework} \           |      Specify the directory, absolute or relative to the test csproj file. If the file name is not specified, it will be TestResults.xml    |
+|   MethodFormat  |       Default <br> Class <br> Full        |  This option alters the testcase name attribute. By default, this contains only the method. Class, will add the class to the name. Full, will add the assembly/namespace/class to the method. See [here](/docs/gitlab-recommendation.md) for an example of why this might be useful.        |
+|   FailureBodyFormat  |    Default <br> Verbose           |     When set to default, the body will contain only the exception which is captured by vstest. Verbose will prepend the body with 'Expected X, Actual Y' similar to how it is displayed in the standard test output. 'Expected X, Actual Y' are normally only contained in the failure message. See [here](/docs/gitlab-recommendation.md) for an example of why this might be useful.    |
 
-**Note:** the arguments to `--logger` should be in quotes since `;` is treated as a command delimiter in shell.
+By default, every test project generates an xml report with the same directory and file name. The tokens {framework} and {assembly} may be placed anywhere in the directory or file names to customize the output location. This is **critical**, when multiple test reports will be written to the same directory, as in the following example:
 
 ## License
 MIT
