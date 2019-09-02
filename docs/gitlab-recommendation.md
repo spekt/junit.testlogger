@@ -6,21 +6,21 @@ GitLab uses just a few pieces of the XML report to generate the displayed user i
 
 The summary view shows passing and failing tests by method name (including any parameters). GitLab generates its summary of New failing tests, existing failing tests, and newly passing tests based on this string. 
 
-![Default Test Summary](docs/assets/gitlab-test-summary-with-default-option.png)
+![Default Test Summary](assets/gitlab-test-summary-with-default-option.png)
 
 The popup displayed when clicking on a test, shows only the body of the failure. 
 
-![Default Popup](docs/assets/gitlab-test-popup-with-default-failure.png)
+![Default Popup](assets/gitlab-test-popup-with-default-failure.png)
 
 ## Improved Output With Formatting Options
 
 The test summary can be modified by setting the method format. The option below used 'MethodFormat=Class'. This is purely a matter of preference, but including the class name, or even the assembly and namespace, may make it easier to track test failures in the UI back to code. 
 
-![Test Summary with Class Option](docs/assets/gitlab-test-summary-with-class-option.png)
+![Test Summary with Class Option](assets/gitlab-test-summary-with-class-option.png)
 
 The popup is much more useful with the inclusion of the 'Expected X, Actual Y' data. This is added to the failure body using 'FailureBodyFormat=Verbose'
 
-![Verbose Popup](docs/assets/gitlab-test-popup-with-verbose-failure.png)
+![Verbose Popup](assets/gitlab-test-popup-with-verbose-failure.png)
 
 ## Example .gitlab-ci.yml
 
