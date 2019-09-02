@@ -112,6 +112,11 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             return roots;
         }
 
+        /// <summary>
+        /// Initialized called by dotnet test.
+        /// </summary>
+        /// <param name="events">Test logger event.</param>
+        /// <param name="testResultsDirPath">A single string is assumed to be the test result directory argument.</param>
         public void Initialize(TestLoggerEvents events, string testResultsDirPath)
         {
             if (events == null)
@@ -128,6 +133,11 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             this.InitializeImpl(events, outputPath);
         }
 
+        /// <summary>
+        /// Initialized called by dotnet test.
+        /// </summary>
+        /// <param name="events">Test logger event.</param>
+        /// <param name="parameters">Dictionary of key value pairs provided by the user, semicolon delimited (i.e. 'key1=val1;key2=val2').</param>
         public void Initialize(TestLoggerEvents events, Dictionary<string, string> parameters)
         {
             if (events == null)
@@ -140,7 +150,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                 throw new ArgumentNullException(nameof(parameters));
             }
 
-            // Assist users with message about whether a CLI option was ignored.
+            // Assist users with message when they entered invalid CLI options
             var knownKeys = new List<string>() { ResultDirectoryKey, LogFilePathKey, LogFileNameKey, MethodFormatKey, FailureBodyFormatKey };
             parameters.Where(x => knownKeys.Contains(x.Key) == false).ToList()
                 .ForEach(x => Console.WriteLine($"JunitXML Logger: The provided configuration item '{x.Key}' is not valid and will be ignored. Note, names are case sensitive."));
@@ -410,24 +420,8 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             this.localStartTime = DateTime.UtcNow;
         }
 
-        /*
-    <?xml version="1.0" encoding="UTF-8"?>
-    <testsuites id="20140612_170519" name="New_configuration (14/06/12 17:05:19)" tests="225" failures="1262" time="0.001">
-        <testsuite name="rspec" tests="2" skipped="0" failures="0" errors="0" time="0.001691" timestamp="2018-07-30T10:02:37+00:00" hostname="runner-7661726c-project-14-concurrent-0">
-            <properties>
-              <property name="seed" value="8528"/>
-            </properties>
-            <testcase classname="spec.string_helper_spec" name="StringHelper#concatenate when a is git and b is lab returns summary" file="./spec/string_helper_spec.rb" time="0.000287"></testcase>
-            <testcase time="0.000102" name="Test#subtract3 fails" file="./spec/test_spec.rb" classname="spec.test_spec">
-                <failure type="RSpec::Expectations::ExpectationNotMetError" message="expected: falsey value got: true">Failure/Error: expect(true).to be_falsy expected: falsey value got: true ./spec/test_spec.rb:66:in `block (3 levels) in <top (required)>'</failure>
-            </testcase>
-        </testsuite>
-     </testsuites>
-         */
-
         private XElement CreateTestSuitesElement(List<TestResultInfo> results)
         {
-            // <testsuites id="20140612_170519" name="New_configuration (14/06/12 17:05:19)" tests="225" failures="1262" time="0.001">
             var assemblies = results.Select(x => x.AssemblyPath).Distinct().ToList();
             var testsuiteElements = assemblies
                 .Select(a => this.CreateTestSuiteElement(results.Where(x => x.AssemblyPath == a).ToList()));
@@ -445,7 +439,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
         private XElement CreateTestSuiteElement(List<TestResultInfo> results)
         {
-            // <testsuite name="rspec" tests="2" skipped="0" failures="0" errors="0" time="0.001691" timestamp="2018-07-30T10:02:37+00:00" hostname="runner-7661726c-project-14-concurrent-0">
             var testCaseElements = results.Select(a => this.CreateTestCaseElement(a));
 
             var element = new XElement("testsuite", testCaseElements);
@@ -465,10 +458,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
         private XElement CreateTestCaseElement(TestResultInfo result)
         {
-            // <testcase classname="spec.string_helper_spec" name="StringHelper#concatenate when a is git and b is lab returns summary" file="./spec/string_helper_spec.rb" time="0.000287"></testcase>
-            // <testcase time="0.000102" name="Test#subtract3 fails" file="./spec/test_spec.rb" classname="spec.test_spec">
-            //       <failure type="RSpec::Expectations::ExpectationNotMetError" message="expected: falsey value got: true">Failure/Error: expect(true).to be_falsy expected: falsey value got: true ./spec/test_spec.rb:66:in `block (3 levels) in <top (required)>'</failure>
-            // </testcase>
             var testcaseElement = new XElement("testcase");
 
             var namespaceClass = result.TestCase
