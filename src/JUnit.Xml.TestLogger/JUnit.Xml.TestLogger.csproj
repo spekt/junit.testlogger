@@ -17,8 +17,4 @@
     <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="15.5.0" />
     <PackageReference Include="System.ValueTuple" Version="4.3.0" />
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <!--<Exec Command="xcopy $(OutDir)Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger.dll $(SolutionDir)..\ci_cd_test\ci_cd\ /Y /F" />-->
-  </Target>
 </Project>

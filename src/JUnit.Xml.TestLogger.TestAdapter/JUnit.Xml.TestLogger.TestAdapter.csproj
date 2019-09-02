@@ -35,9 +35,4 @@
       <HintPath>..\..\..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\newtonsoft.json\9.0.1\lib\netstandard1.0\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <!--<Exec Command="xcopy $(OutDir)Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestAdapter.dll $(SolutionDir)..\ci_cd_test\ci_cd\ /Y&#xD;&#xA;" />-->
-  </Target>
-
 </Project>
