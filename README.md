@@ -43,37 +43,37 @@ After the logger name, command line arguments are provided as key/value pairs wi
 ####   LogFilePath  
 Specify the path and file relative to the .csproj file for each test project.  <br> **Note** This option is not compatible with LogFileName or TestRunDirectory  
 ##### Examples 
-* artifacts\\test-output.xml 
-* artifacts\\{framework}\\{assembly}-test-results.xml 
-* ..\\artifacts\\{assembly}-test-results.xml   
+* LogFilePath=artifacts\\test-output.xml 
+* LogFilePath=artifacts\\{framework}\\{assembly}-test-results.xml 
+* LogFilePath=..\\artifacts\\{assembly}-test-results.xml   
 
 ####  LogFileName  
 Specify the file name. Unless the TestRunDirectory is specified the file will be stored in the default TestResult directory, relative to the test csproj file.         
 ##### Examples
-* test-output.xml 
-* {framework}-{assembly}-test-results.xml        
+* LogFileName=test-output.xml 
+* LogFileName={framework}-{assembly}-test-results.xml        
 
 ####   TestRunDirectory  
 Specify the directory, absolute or relative to the test csproj file. If the file name is not specified, it will be TestResults.xml    
 
 ##### Examples
-* artifacts\\
-* artifacts\\{framework}\           
+* TestRunDirectory=artifacts\\
+* TestRunDirectory=artifacts\\{framework}\           
 
 ####   MethodFormat 
 This option alters the testcase name attribute. By default, this contains only the method. Class, will add the class to the name. Full, will add the assembly/namespace/class to the method. See [here](/docs/gitlab-recommendation.md) for an example of why this might be useful.       
 
 ##### Allowed Values
-* Default
-* Class
-* Full        
+* MethodFormat=Default
+* MethodFormat=Class
+* MethodFormat=Full        
 
 ####   FailureBodyFormat  
 When set to default, the body will contain only the exception which is captured by vstest. Verbose will prepend the body with 'Expected X, Actual Y' similar to how it is displayed in the standard test output. 'Expected X, Actual Y' are normally only contained in the failure message. See [here](/docs/gitlab-recommendation.md) for an example of why this might be useful.    
 
 ##### Allowed Values
-* Default
-* Verbose          
+* FailureBodyFormat=Default
+* FailureBodyFormat=Verbose          
 
 
 ### Saving Multiple Result Files In One Directory
