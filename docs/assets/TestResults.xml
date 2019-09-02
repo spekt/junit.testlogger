@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="UnitTestLibrary1.dll" tests="9" failures="4" time="0.1420004">
+  <testsuite name="UnitTestLibrary1.dll" tests="9" skipped="0" failures="4" errors="0" time="0.1420004" timestamp="2019-09-01T 23:56:54Z" hostname="executor://nunit3testexecutor/">
+    <testcase classname="UnitTestLibrary1.MathTests" name="Add_ReturnsCorrectResult(1,0,1)" file="C:\Users\[user name]\Documents\GitHub\[solution folder]\UnitTests\bin\Debug\netcoreapp2.2\UnitTestLibrary1.dll" time="0.028999999999999998" />
+    <testcase classname="UnitTestLibrary1.MathTests" name="Add_ReturnsCorrectResult(1,2,3)" file="C:\Users\[user name]\Documents\GitHub\[solution folder]\UnitTests\bin\Debug\netcoreapp2.2\UnitTestLibrary1.dll" time="1E-07" />
+    <testcase classname="UnitTestLibrary1.MathTests" name="Add_ReturnsCorrectResult(10,20,30)" file="C:\Users\[user name]\Documents\GitHub\[solution folder]\UnitTests\bin\Debug\netcoreapp2.2\UnitTestLibrary1.dll" time="1E-07" />
+    <testcase classname="UnitTestLibrary1.MathTests" name="Multiply_ReturnsCorrectResult(1,0,0)" file="C:\Users\[user name]\Documents\GitHub\[solution folder]\UnitTests\bin\Debug\netcoreapp2.2\UnitTestLibrary1.dll" time="1E-07" />
+    <testcase classname="UnitTestLibrary1.MathTests" name="Multiply_ReturnsCorrectResult(1,2,2)" file="C:\Users\[user name]\Documents\GitHub\[solution folder]\UnitTests\bin\Debug\netcoreapp2.2\UnitTestLibrary1.dll" time="1E-07" />
+    <testcase classname="UnitTestLibrary1.MathTests" name="Multiply_ReturnsEight(1,0)" file="C:\Users\[user name]\Documents\GitHub\[solution folder]\UnitTests\bin\Debug\netcoreapp2.2\UnitTestLibrary1.dll" time="0.109">
+      <failure type="failure" message="  Expected: 8&#xD;&#xA;  But was:  0&#xD;&#xA;">   at UnitTestLibrary1.MathTests.Multiply_ReturnsEight(Int32 a, Int32 b) in C:\Users\[user name]\Documents\GitHub\[solution folder]\UnitTests\MathTests.cs:line 40
+
+</failure>
+    </testcase>
+    <testcase classname="UnitTestLibrary1.MathTests" name="Multiply_ReturnsEight(1,2)" file="C:\Users\[user name]\Documents\GitHub\[solution folder]\UnitTests\bin\Debug\netcoreapp2.2\UnitTestLibrary1.dll" time="0.002">
+      <failure type="failure" message="  Expected: 8&#xD;&#xA;  But was:  2&#xD;&#xA;">   at UnitTestLibrary1.MathTests.Multiply_ReturnsEight(Int32 a, Int32 b) in C:\Users\[user name]\Documents\GitHub\[solution folder]\UnitTests\MathTests.cs:line 40
+
+</failure>
+    </testcase>
+    <testcase classname="UnitTestLibrary1.MathTests" name="Multiply_ReturnsEight(2,2)" file="C:\Users\[user name]\Documents\GitHub\[solution folder]\UnitTests\bin\Debug\netcoreapp2.2\UnitTestLibrary1.dll" time="0.001">
+      <failure type="failure" message="  Expected: 8&#xD;&#xA;  But was:  4&#xD;&#xA;">   at UnitTestLibrary1.MathTests.Multiply_ReturnsEight(Int32 a, Int32 b) in C:\Users\[user name]\Documents\GitHub\[solution folder]\UnitTests\MathTests.cs:line 40
+
+</failure>
+    </testcase>
+    <testcase classname="UnitTestLibrary1.MathTests" name="Multiply_ReturnsEight(1,2)" file="C:\Users\[user name]\Documents\GitHub\[solution folder]\UnitTests\bin\Debug\netcoreapp2.2\UnitTestLibrary1.dll" time="0.001">
+      <failure type="failure" message="  Expected: 8&#xD;&#xA;  But was:  2&#xD;&#xA;">   at UnitTestLibrary1.MathTests.Multiply_ReturnsEight(Int32 a, Int32 b) in C:\Users\[user name]\Documents\GitHub\[solution folder]\UnitTests\MathTests.cs:line 40
+
+</failure>
+    </testcase>
+  </testsuite>
+</testsuites>
