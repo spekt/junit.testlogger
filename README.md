@@ -19,7 +19,7 @@ If you're looking for `Nunit`, `Xunit` or `appveyor` loggers, visit following re
 
 ## Usage
 
-JUnit logger can generate xml reports in the JUnit format. The JUnit format seems to be variable across different implementations, with the JUnit 5 repository referring to the [Ant Junit Format](https://github.com/windyroad/JUnit-Schema) as a de-facto standard. This project does not implement that standard exactly. Please [refer to a sample file](docs/assets/TestResults.xml) to see an example of which parts of the format have been implemented. If you find that this format is missing some featur required by your CI/CD system, please open an issue.
+JUnit logger can generate xml reports in the JUnit format. The JUnit format seems to be variable across different implementations, with the JUnit 5 repository referring to the [Ant Junit Format](https://github.com/windyroad/JUnit-Schema) as a de-facto standard. This project does not implement that standard exactly. Please [refer to a sample file](docs/assets/TestResults.xml) to see an example of which parts of the format have been implemented. If you find that this format is missing some feature required by your CI/CD system, please open an issue.
 
 ### Default Behavior
 
@@ -98,19 +98,19 @@ When set to default, the body will contain only the exception which is captured 
 By default, every test project generates an xml report with the same directory and file name. The tokens {framework} and {assembly} may be placed anywhere in the directory or file names to customize the output location. This is **critical**, when multiple test reports will be written to the same directory, as in the following example. Otherwise, the files would use identical names, and the second output file written would overwrite the first.
 
 ```
-Start:
+Consider following project structure:
 .\Solution\MySolution.sln
-     ﾤ----\TestLib1\TestLib1.csproj
-     ﾤ----\TestLib2\TestLib2.csproj
+     |____\TestLib1\TestLib1.csproj
+     |____\TestLib2\TestLib2.csproj
 
 Run Tests:
  > dotnet test --test-adapter-path:. --logger:"junit;LogFilePath=..\artifacts\{assembly}-test-results.xml"
 
 New Files:
 .\Solution\
-     ﾤ----\artifacts\
-               ﾤ----\TestLib1-test-results.xml
-               ﾤ----\TestLib2-test-results.xml
+     |____\artifacts
+          |____\TestLib1-test-results.xml
+          |____\TestLib2-test-results.xml
 ```
 
 ## License
