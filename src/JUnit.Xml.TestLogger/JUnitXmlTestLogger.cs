@@ -494,7 +494,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
                     // Stack trace included to mimic the normal test output
                     failureBodySB.AppendLine("Stack Trace:");
-                    File.WriteAllText(@"C:\temp\junitlogger", "BodyVerbose");
                 }
 
                 failureBodySB.AppendLine(result.ErrorStackTrace);
