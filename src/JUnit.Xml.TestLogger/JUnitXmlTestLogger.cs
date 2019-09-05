@@ -598,9 +598,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
             var namespaceClass = result.TestCase
                 .FullyQualifiedName
-                .Substring(0, result.TestCase.FullyQualifiedName.IndexOf(result.TestCase.DisplayName) - 1);
-
-            var className = namespaceClass.Substring(namespaceClass.LastIndexOf('.') + 1);
+                .Substring(0, result.TestCase.FullyQualifiedName.IndexOf(result.Name) - 1);
 
             testcaseElement.SetAttributeValue("classname", namespaceClass);
 
@@ -610,7 +608,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             }
             else if (this.MethodFormatOption == MethodFormat.Class)
             {
-                testcaseElement.SetAttributeValue("name", className + "." + result.Name);
+                testcaseElement.SetAttributeValue("name", result.Type + "." + result.Name);
             }
             else
             {

@@ -8,6 +8,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
     using System.Linq;
     using System.Xml.Linq;
     using System.Xml.XPath;
+    using Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
@@ -78,7 +79,10 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
             foreach (var testcase in testcases)
             {
-                Assert.IsTrue(IsMethodNameOnly(testcase.Attribute("name").Value));
+                var parsedName = JUnitXmlTestLogger.ParseTestCaseName(testcase.Attribute("name").Value);
+
+                // A method name only will not be parsable into two pieces
+                Assert.AreEqual(parsedName.Item1, JUnitXmlTestLogger.TestCaseParserUnknownType);
             }
         }
 
@@ -96,15 +100,11 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
             foreach (var testcase in testcases)
             {
-                var methodWithoutArgs = RemoveParametersFromMethod(testcase.Attribute("name").Value);
+                var parsedName = JUnitXmlTestLogger.ParseTestCaseName(testcase.Attribute("name").Value);
 
-                var classOnly = methodWithoutArgs.Substring(0, methodWithoutArgs.LastIndexOf('.'));
-
-                var assemblyClass = testcase.Attribute("classname").Value;
-
-                // For the class, the namespaces may not match the dll, so we can only check that the method name
-                // ends with everything before the method in the method name
-                Assert.IsTrue(assemblyClass.EndsWith(classOnly));
+                // If the name is parsable into two pieces, then we have a two piece name
+                // and consider that to be a passing result.
+                Assert.AreNotEqual(parsedName.Item1, JUnitXmlTestLogger.TestCaseParserUnknownType);
             }
         }
 
@@ -122,27 +122,15 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
             foreach (var testcase in testcases)
             {
-                var methodFullName = testcase.Attribute("name").Value;
-                var stringStart = testcase.Attribute("classname").Value + ".";
-                var methodOnly = methodFullName.Substring(stringStart.Length, methodFullName.Length - stringStart.Length);
+                var parsedName = JUnitXmlTestLogger.ParseTestCaseName(testcase.Attribute("name").Value);
 
-                Assert.IsTrue(methodFullName.StartsWith(stringStart));
-                Assert.IsTrue(IsMethodNameOnly(methodOnly));
+                // We expect the full name would be the class name plus the parsed method
+                var actualFullName = testcase.Attribute("classname").Value + "." + parsedName.Item2;
+
+                // If the name is parsable into two pieces, then we have at least a two piece name
+                Assert.AreNotEqual(parsedName.Item1, JUnitXmlTestLogger.TestCaseParserUnknownType);
+                Assert.AreEqual(actualFullName, testcase.Attribute("name").Value);
             }
-        }
-
-        private static bool IsMethodNameOnly(string methodName)
-        {
-            string baseMethodName = RemoveParametersFromMethod(methodName);
-
-            return baseMethodName.Contains('.') == false;
-        }
-
-        private static string RemoveParametersFromMethod(string methodName)
-        {
-            // The base method is everything before parameters. When there isn't an opening parenthesis
-            // then the substring would be null.
-            return methodName.Contains('(') ? methodName.Substring(0, methodName.IndexOf('(')) : methodName;
         }
     }
 }

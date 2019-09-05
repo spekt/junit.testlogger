@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <SourceRoot Condition="$(SourceRoot) == ''">..\..\</SourceRoot>
@@ -23,9 +23,12 @@
   <Target Name="TestTarget" AfterTargets="Build">
     <Message Importance="High" Text="... Building test assets" />
     <RemoveDir Directories="$(NuGetPackageRoot)/junitxml.testlogger" />
-    <Exec ContinueOnError="False" Command="dotnet build -c $(Configuration) -p:PackageVersion=$(PackageVersion) -p:RestoreConfigFile=$(TestRestoreConfig) -p:RestoreIgnoreFailedSources=true -p:RestoreNoCache=true $(TestCoreProject)"/>
-    <Exec ContinueOnError="False" Command="dotnet build -c $(Configuration) -p:PackageVersion=$(PackageVersion) -p:RestoreConfigFile=$(TestRestoreConfig) -p:RestoreIgnoreFailedSources=true -p:RestoreNoCache=true $(TestFullProject)"/>
-    <Exec ContinueOnError="False" Command="dotnet build -c $(Configuration) -p:PackageVersion=$(PackageVersion) -p:RestoreConfigFile=$(TestRestoreConfig) -p:RestoreIgnoreFailedSources=true -p:RestoreNoCache=true $(TestMultiProject)"/>
+    <Exec ContinueOnError="False" Command="dotnet build -c $(Configuration) -p:PackageVersion=$(PackageVersion) -p:RestoreConfigFile=$(TestRestoreConfig) -p:RestoreIgnoreFailedSources=true -p:RestoreNoCache=true $(TestCoreProject)" />
+    <Exec ContinueOnError="False" Command="dotnet build -c $(Configuration) -p:PackageVersion=$(PackageVersion) -p:RestoreConfigFile=$(TestRestoreConfig) -p:RestoreIgnoreFailedSources=true -p:RestoreNoCache=true $(TestFullProject)" />
+    <Exec ContinueOnError="False" Command="dotnet build -c $(Configuration) -p:PackageVersion=$(PackageVersion) -p:RestoreConfigFile=$(TestRestoreConfig) -p:RestoreIgnoreFailedSources=true -p:RestoreNoCache=true $(TestMultiProject)" />
     <Message Importance="High" Text="... Completed" />
   </Target>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\JUnit.Xml.TestLogger\JUnit.Xml.TestLogger.csproj" />
+  </ItemGroup>
 </Project>
