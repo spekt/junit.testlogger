@@ -146,7 +146,7 @@ namespace JUnit.Xml.TestLogger.NetFull.Tests
         }
 
         [Test]
-        public void Test()
+        public void TestA()
         {
         }
     }
@@ -161,7 +161,7 @@ namespace JUnit.Xml.TestLogger.NetFull.Tests
         }
 
         [Test]
-        public void Test()
+        public void TestB()
         {
         }
     }
@@ -176,7 +176,7 @@ namespace JUnit.Xml.TestLogger.NetFull.Tests
         }
 
         [Test]
-        public void Test()
+        public void TestC()
         {
         }
     }
@@ -191,7 +191,7 @@ namespace JUnit.Xml.TestLogger.NetFull.Tests
         }
 
         [Test]
-        public void Test()
+        public void TestD()
         {
         }
     }
@@ -205,7 +205,7 @@ namespace JUnit.Xml.TestLogger.NetFull.Tests
         }
 
         [Test]
-        public void Test()
+        public void TestE()
         {
         }
 
