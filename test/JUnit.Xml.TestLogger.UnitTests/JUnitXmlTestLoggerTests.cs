@@ -54,6 +54,68 @@ namespace JUnit.Xml.TestLogger.UnitTests
             Assert.AreEqual(expectedXmlForA, result[1].Element.ToString(SaveOptions.DisableFormatting));
         }
 
+        [DataTestMethod]
+        [DataRow("a.b", "a", "b")]
+
+        // Cover all expected cases of different parentesis locations, handling normal strings
+        [DataRow("z.y.x.a.b(\"arg\",2)", "a", "b(\"arg\",2)")]
+        [DataRow("a.b(\"arg\",2)", "a", "b(\"arg\",2)")]
+        [DataRow("a(\"arg\",2).b", "a(\"arg\",2)", "b")]
+        [DataRow("z.y.x.a(\"arg\",2).b", "a(\"arg\",2)", "b")]
+        [DataRow("a(\"arg\",2).b(\"arg\",2)", "a(\"arg\",2)", "b(\"arg\",2)")]
+        [DataRow("z.y.x.a(\"arg\",2).b(\"arg\",2)", "a(\"arg\",2)", "b(\"arg\",2)")]
+
+        // Cover select cases with characters in strings that could cause issues
+        [DataRow("z.y.x.a.b(\"arg\",\"\\\"\")", "a", "b(\"arg\",\"\\\"\")")]
+        [DataRow("z.y.x.a.b(\"arg\",\")(\")", "a", "b(\"arg\",\")(\")")]
+
+        // Tests with longer type and method names
+        [DataRow("z.y.x.ape.bar(\"ar.g\",\"\\\"\")", "ape", "bar(\"ar.g\",\"\\\"\")")]
+        [DataRow("z.y.x.ape.bar(\"ar.g\",\")(\")", "ape", "bar(\"ar.g\",\")(\")")]
+        public void ParseTestCaseName_ParsesAllParsableInputs_WithoutConsoleOutput(string testCaseName, string expectedType, string expectedMethod)
+        {
+            var expected = new Tuple<string, string>(expectedType, expectedMethod);
+
+            using (var sw = new StringWriter())
+            {
+                Console.SetOut(sw);
+
+                Assert.AreEqual(expected, JUnitXmlTestLogger.ParseTestCaseName(testCaseName));
+                Assert.AreEqual(0, sw.ToString().Length);
+            }
+        }
+
+        [DataTestMethod]
+        [DataRow("x.()x()")]
+        [DataRow("x")]
+        [DataRow("z.y.X(x")]
+        [DataRow("z.y.x(")]
+        [DataRow("z.y.X\"x")]
+        [DataRow("z.y.x\"")]
+        [DataRow("z.y.X\\x")]
+        [DataRow("z.y.x\\")]
+        [DataRow("z.y.X\\)")]
+        [DataRow("z.y.x))")]
+        [DataRow("z.y.x()x")]
+        [DataRow("z.y.x.")]
+        [DataRow("z.y.x.)")]
+        [DataRow("z.y.x.\"\")")]
+        public void ParseTestCaseName_FailsGracefullyOnNonParsableInputs_WithConsoleOutput(string testCaseName)
+        {
+            var expected = new Tuple<string, string>(JUnitXmlTestLogger.TestCaseParserUnknownType, testCaseName);
+            var expectedConsole = string.Format(JUnitXmlTestLogger.TestCaseParserErrorTemplate, testCaseName);
+
+            using (var sw = new StringWriter())
+            {
+                Console.SetOut(sw);
+
+                Assert.AreEqual(expected, JUnitXmlTestLogger.ParseTestCaseName(testCaseName));
+
+                // Remove the trailing new line before comparing.
+                Assert.AreEqual(expectedConsole, sw.ToString().Replace(sw.NewLine, string.Empty));
+            }
+        }
+
         private static TestSuite CreateTestSuite(string name)
         {
             return new TestSuite
