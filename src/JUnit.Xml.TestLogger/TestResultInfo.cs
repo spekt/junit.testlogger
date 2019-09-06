@@ -21,27 +21,27 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             this.Method = method;
         }
 
-        public TestCase TestCase => result.TestCase;
+        public TestCase TestCase => this.result.TestCase;
 
-        public TestOutcome Outcome => result.Outcome;
+        public TestOutcome Outcome => this.result.Outcome;
 
-        public string AssemblyPath => result.TestCase.Source;
+        public string AssemblyPath => this.result.TestCase.Source;
 
         public string Type { get; private set; }
 
         public string Method { get; private set; }
 
-        public string Name => result.TestCase.DisplayName;
+        public string Name => this.result.TestCase.DisplayName;
 
-        public TimeSpan Duration => result.Duration;
+        public TimeSpan Duration => this.result.Duration;
 
-        public string ErrorMessage => result.ErrorMessage;
+        public string ErrorMessage => this.result.ErrorMessage;
 
-        public string ErrorStackTrace => result.ErrorStackTrace;
+        public string ErrorStackTrace => this.result.ErrorStackTrace;
 
-        public IReadOnlyCollection<TestResultMessage> Messages => result.Messages;
+        public IReadOnlyCollection<TestResultMessage> Messages => this.result.Messages;
 
-        public TraitCollection Traits => result.Traits;
+        public TraitCollection Traits => this.result.Traits;
 
         public override int GetHashCode()
         {

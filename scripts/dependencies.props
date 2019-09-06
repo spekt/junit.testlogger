@@ -10,6 +10,6 @@
     <NUnitVersion>3.10.1</NUnitVersion>
     <NUnitTestAdapterVersion>3.10.0</NUnitTestAdapterVersion>
 
-    <StylecopVersion>1.1.0-beta009</StylecopVersion>
+    <StylecopVersion>1.1.118</StylecopVersion>
   </PropertyGroup>
 </Project>
