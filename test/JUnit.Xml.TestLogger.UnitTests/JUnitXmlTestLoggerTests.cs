@@ -64,6 +64,10 @@ namespace JUnit.Xml.TestLogger.UnitTests
         [DataRow("z.y.x.a(\"arg\",2).b", "a(\"arg\",2)", "b")]
         [DataRow("a(\"arg\",2).b(\"arg\",2)", "a(\"arg\",2)", "b(\"arg\",2)")]
         [DataRow("z.y.x.a(\"arg\",2).b(\"arg\",2)", "a(\"arg\",2)", "b(\"arg\",2)")]
+        [DataRow("z.y.x.a(\"arg.())(\",2).b", "a(\"arg.())(\",2)", "b")]
+
+        // Examples with period in non string
+        [DataRow("a.b(0.5f)", "a", "b(0.5f)")]
 
         // Cover select cases with characters in strings that could cause issues
         [DataRow("z.y.x.a.b(\"arg\",\"\\\"\")", "a", "b(\"arg\",\"\\\"\")")]
