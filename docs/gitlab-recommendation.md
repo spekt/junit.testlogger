@@ -14,7 +14,7 @@ The popup displayed when clicking on a test, shows only the body of the failure.
 
 ## Improved Output With Formatting Options
 
-The test summary can be modified by setting the method format. The option below used 'MethodFormat=Class'. This is purely a matter of preference, but including the class name, or even the assembly and namespace, may make it easier to track test failures in the UI back to code. 
+The test summary can be modified by setting the method format. The option below used 'MethodFormat=Class'. This can be particularly helpful when using test fixture data (i.e. there are paramters passed to the class) which you would like to display.
 
 ![Test Summary with Class Option](assets/gitlab-test-summary-with-class-option.png)
 
