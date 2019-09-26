@@ -3,13 +3,13 @@
 JUnit xml report extension for [Visual Studio Test Platform](https://github.com/microsoft/vstest).
 
 [![Build Status](https://travis-ci.com/spekt/junit.testlogger.svg?branch=master)](https://travis-ci.com/spekt/junit.testlogger)
-[![Build status](https://ci.appveyor.com/api/projects/status/0hw9s9ib60rw46om?svg=true)](https://ci.appveyor.com/project/spekt/junit-testlogger)
+[![Build status](https://ci.appveyor.com/api/projects/status/gsiaqo5g4gfk76kq?svg=true)](https://ci.appveyor.com/project/spekt/junit-testlogger)
 
 ## Packages
 
 | Logger | Stable Package | Pre-release Package |
 | ------ | -------------- | ------------------- |
-| JUnit | <!-- [![NuGet](https://img.shields.io/nuget/v/JUnitXml.TestLogger.svg)](https://www.nuget.org/packages/JUnitXml.TestLogger/) --> TODO | [![MyGet Pre Release](https://img.shields.io/myget/spekt/vpre/junitxml.testlogger.svg)](https://www.myget.org/feed/spekt/package/nuget/JunitXml.TestLogger) |
+| JUnit | [![NuGet](https://img.shields.io/nuget/v/JUnitXml.TestLogger.svg)](https://www.nuget.org/packages/JUnitXml.TestLogger/) | [![MyGet Pre Release](https://img.shields.io/myget/spekt/vpre/junitxml.testlogger.svg)](https://www.myget.org/feed/spekt/package/nuget/JunitXml.TestLogger) |
 
 If you're looking for `Nunit`, `Xunit` or `appveyor` loggers, visit following repositories:
 
