@@ -31,25 +31,22 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         }
 
         /// <summary>
-        /// This method attempts to parse out a Type and Method name from a given string. When a clearly
+        /// This method attempts to parse out a Namespace, Type and Method name from a given string. When a clearly
         /// invalid output is encountered, a message is written to the console.
         /// </summary>
         /// <remarks>
         /// This is fragile, because the fully qualified name is constructed by a test adapter and there is
-        /// no enforcement that the FQN starts with metadata type name, or is of the expected format.
+        /// no enforcement that the FQN starts with the namespace, or is of the expected format.
+        /// Because the possible input space is very large and this parser is relativly simple
+        /// there are some invalid strings, such as "#.#.#" will 'successfully' parse.
         /// </remarks>
-        /// <example>
-        /// Some invalid strings, such as "#.#" will 'successfully' parse, because the possible input space
-        /// is very large and this parser is relativly simple.
-        /// </example>
         /// <param name="fullyQualifedName">
-        /// String like 'type.method', where type and or method may be followed by parenthesis containing
-        /// parameter values. The string may be prefixed with namespaces.
+        /// String like 'namespace.type.method', where type and or method may be followed by parenthesis containing
+        /// parameter values.
         /// </param>
         /// <returns>
-        /// A Tuple of strings: typeName, methodName. Output will always be provided. In the case that
-        /// input was obviously invalid, then a string indicating the error will be the first value
-        /// and the input string will be the second.
+        /// An instance of ParsedName containing the parsed results. A result is always returned, even in the case when
+        /// the input could not be full parsed.
         /// </returns>
         public static ParsedName Parse(string fullyQualifedName)
         {
