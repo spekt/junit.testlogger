@@ -79,10 +79,10 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
             foreach (var testcase in testcases)
             {
-                var parsedName = JUnitXmlTestLogger.ParseTestCaseName(testcase.Attribute("name").Value);
+                var parsedName = TestCaseNameParser.Parse(testcase.Attribute("name").Value);
 
                 // A method name only will not be parsable into two pieces
-                Assert.AreEqual(parsedName.Item1, JUnitXmlTestLogger.TestCaseParserUnknownType);
+                Assert.AreEqual(parsedName.TypeName, TestCaseNameParser.TestCaseParserUnknownType);
             }
         }
 
@@ -100,11 +100,11 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
             foreach (var testcase in testcases)
             {
-                var parsedName = JUnitXmlTestLogger.ParseTestCaseName(testcase.Attribute("name").Value);
+                var parsedName = TestCaseNameParser.Parse(testcase.Attribute("name").Value);
 
                 // If the name is parsable into two pieces, then we have a two piece name
                 // and consider that to be a passing result.
-                Assert.AreNotEqual(parsedName.Item1, JUnitXmlTestLogger.TestCaseParserUnknownType);
+                Assert.AreNotEqual(parsedName.TypeName, TestCaseNameParser.TestCaseParserUnknownType);
             }
         }
 
@@ -122,14 +122,14 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
             foreach (var testcase in testcases)
             {
-                var parsedName = JUnitXmlTestLogger.ParseTestCaseName(testcase.Attribute("name").Value);
+                var parsedName = TestCaseNameParser.Parse(testcase.Attribute("name").Value);
 
                 // We expect the full name would be the class name plus the parsed method
-                var actualFullName = testcase.Attribute("classname").Value + "." + parsedName.Item2;
+                var expectedFullName = parsedName.NamespaceName + "." + parsedName.TypeName + "." + parsedName.MethodName;
 
                 // If the name is parsable into two pieces, then we have at least a two piece name
-                Assert.AreNotEqual(parsedName.Item1, JUnitXmlTestLogger.TestCaseParserUnknownType);
-                Assert.AreEqual(actualFullName, testcase.Attribute("name").Value);
+                Assert.AreNotEqual(parsedName.TypeName, TestCaseNameParser.TestCaseParserUnknownType);
+                Assert.AreEqual(expectedFullName, testcase.Attribute("name").Value);
             }
         }
     }
