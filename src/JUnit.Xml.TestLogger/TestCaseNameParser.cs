@@ -57,19 +57,17 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             var step = NameParseStep.FindMethod;
             var state = NameParseState.Default;
 
-            var tuptuo = new List<char>();
+            var output = new List<char>();
 
             try
             {
-                var eman = fullyQualifedName.ToCharArray().Reverse().ToArray();
-
-                for (int i = 0; i < eman.Count(); i++)
+                for (int i = fullyQualifedName.Length - 1; i >= 0; i--)
                 {
-                    var thisChar = eman[i];
+                    var thisChar = fullyQualifedName[i];
                     if (step == NameParseStep.FindNamespace)
                     {
                         // When we are doing namespace, we always accumulate the char.
-                        tuptuo.Add(thisChar);
+                        output.Insert(0, thisChar);
                     }
                     else if (state == NameParseState.Default)
                     {
@@ -79,50 +77,48 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                         }
                         else if (thisChar == ')')
                         {
-                            if (tuptuo.Count > 0)
+                            if (output.Count > 0)
                             {
                                 throw new Exception("The closing parenthesis we detected wouldn't be the last character in the output string. This isn't acceptable because we aren't in a string");
                             }
 
                             state = NameParseState.Parenthesis;
-                            tuptuo.Add(thisChar);
+                            output.Insert(0, thisChar);
                         }
                         else if (thisChar == '.')
                         {
                             // Found the end of this element.
                             if (step == NameParseStep.FindMethod)
                             {
-                                if (tuptuo.Count == 0)
+                                if (output.Count == 0)
                                 {
                                     throw new Exception("This shouldn't be an empty string");
                                 }
 
-                                tuptuo.Reverse();
-                                metadataMethodName = string.Join(string.Empty, tuptuo);
+                                metadataMethodName = string.Join(string.Empty, output);
 
                                 // Prep the next step
-                                tuptuo = new List<char>();
+                                output = new List<char>();
                                 step = NameParseStep.FindType;
                             }
                             else if (step == NameParseStep.FindType)
                             {
-                                if (tuptuo.Count == 0)
+                                if (output.Count == 0)
                                 {
                                     throw new Exception("This shouldn't be an empty string");
                                 }
 
-                                tuptuo.Reverse();
-                                metadataTypeName = string.Join(string.Empty, tuptuo);
+                                metadataTypeName = string.Join(string.Empty, output);
 
                                 // Get The Namespace Next
                                 step = NameParseStep.FindNamespace;
-                                tuptuo = new List<char>();
+                                output = new List<char>();
                             }
                         }
                         else
                         {
                             // Part of the name to add
-                            tuptuo.Add(thisChar);
+                            output.Insert(0, thisChar);
                         }
                     }
                     else if (state == NameParseState.Parenthesis)
@@ -131,44 +127,33 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                         {
                             throw new Exception("Found invalid characters");
                         }
-                        else if (thisChar == '(')
+
+                        if (thisChar == '(')
                         {
                             // If we found the beginning of the parenthesis block, we are back in default state
                             state = NameParseState.Default;
-                            tuptuo.Add(thisChar);
                         }
                         else if (thisChar == '"')
                         {
                             // This must come at the end of a string, when escape characters aren't an issue, so we are
                             // 'entering' string state, because of the reverse parsing.
                             state = NameParseState.String;
-                            tuptuo.Add(thisChar);
                         }
-                        else
-                        {
-                            tuptuo.Add(thisChar);
-                        }
+
+                        output.Insert(0, thisChar);
                     }
+
+                    // state == NameParseState.String
                     else
                     {
-                        // We are in String State.
-                        if (thisChar == '"')
+                        if (thisChar == '"' && fullyQualifedName.ElementAtOrDefault(i - 1) != '\\')
                         {
-                            if (eman.ElementAtOrDefault(i + 1) == '\\')
-                            {
-                                // The quote was escaped, so its atually a quote mark in a string
-                                tuptuo.Add(thisChar);
-                            }
-                            else
-                            {
-                                state = NameParseState.Parenthesis;
-                                tuptuo.Add(thisChar);
-                            }
+                            // If this is a quote that has not been escaped, switch the state. If it had
+                            // been escaped, we would still be in a string.
+                            state = NameParseState.Parenthesis;
                         }
-                        else
-                        {
-                            tuptuo.Add(thisChar);
-                        }
+
+                        output.Insert(0, thisChar);
                     }
                 }
 
@@ -176,18 +161,16 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                 // Otherwise, ther was some issue, so leave the type blank.
                 if (step == NameParseStep.FindNamespace)
                 {
-                    tuptuo.Reverse();
-                    metadataNamespaceName = string.Join(string.Empty, tuptuo);
+                    metadataNamespaceName = string.Join(string.Empty, output);
                 }
                 else if (step == NameParseStep.FindType)
                 {
-                    tuptuo.Reverse();
-                    metadataTypeName = string.Join(string.Empty, tuptuo);
+                    metadataTypeName = string.Join(string.Empty, output);
                 }
             }
             catch (Exception)
             {
-                // On exception, whipe out the type name
+                // On exception, wipe out the type name
                 metadataTypeName = string.Empty;
                 metadataNamespaceName = string.Empty;
             }
