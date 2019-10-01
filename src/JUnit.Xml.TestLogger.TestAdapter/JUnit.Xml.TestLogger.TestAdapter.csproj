@@ -20,6 +20,7 @@
     <Compile Include="..\JUnit.Xml.TestLogger\StringExtensions.cs">
       <Link>StringExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\JUnit.Xml.TestLogger\TestCaseNameParser.cs" Link="TestCaseNameParser.cs" />
     <Compile Include="..\JUnit.Xml.TestLogger\TestResultInfo.cs">
       <Link>TestResultInfo.cs</Link>
     </Compile>

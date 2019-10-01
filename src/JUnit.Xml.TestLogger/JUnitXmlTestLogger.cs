@@ -37,9 +37,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         public const string MethodFormatKey = "MethodFormat";
         public const string FailureBodyFormatKey = "FailureBodyFormat";
 
-        public const string TestCaseParserUnknownType = "UnknownType";
-        public const string TestCaseParserErrorTemplate = "JUnitXML Logger: Unable to parse the test name '{0}' into a type and method. Using Type='" + TestCaseParserUnknownType + "' and Method='{0}'";
-
         private const string ResultStatusPassed = "Passed";
         private const string ResultStatusFailed = "Failed";
 
@@ -86,20 +83,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             Verbose
         }
 
-        private enum NameParseStep
-        {
-            FindMethod,
-            FindType,
-            Done
-        }
-
-        private enum NameParseState
-        {
-            Default,
-            Parenthesis,
-            String
-        }
-
         public MethodFormat MethodFormatOption { get; private set; } = MethodFormat.Default;
 
         public FailureBodyFormat FailureBodyFormatOption { get; private set; } = FailureBodyFormat.Default;
@@ -127,173 +110,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             }
 
             return roots;
-        }
-
-        /// <summary>
-        /// This method attempts to parse out a Type and Method name from a given string. When a clearly
-        /// invalid output is encountered, a message is written to the console.
-        /// </summary>
-        /// <remarks>
-        /// This is fragile, because the fully qualified name is constructed by a test adapter and there is
-        /// no enforcement that the FQN starts with metadata type name, or is of the expected format.
-        /// </remarks>
-        /// <example>
-        /// Some invalid strings, such as "#.#" will 'successfully' parse, because the possible input space
-        /// is very large and this parser is relativly simple.
-        /// </example>
-        /// <param name="fullyQualifedName">
-        /// String like 'type.method', where type and or method may be followed by parenthesis containing
-        /// parameter values. The string may be prefixed with namespaces.
-        /// </param>
-        /// <returns>
-        /// A Tuple of strings: typeName, methodName. Output will always be provided. In the case that
-        /// input was obviously invalid, then a string indicating the error will be the first value
-        /// and the input string will be the second.
-        /// </returns>
-        public static Tuple<string, string> ParseTestCaseName(string fullyQualifedName)
-        {
-            var metadataTypeName = string.Empty;
-            var metadataMethodName = string.Empty;
-
-            var step = NameParseStep.FindMethod;
-            var state = NameParseState.Default;
-
-            var tuptuo = new List<char>();
-
-            try
-            {
-                var eman = fullyQualifedName.ToCharArray().Reverse().ToArray();
-
-                for (int i = 0; i < eman.Count(); i++)
-                {
-                    var thisChar = eman[i];
-                    if (state == NameParseState.Default)
-                    {
-                        if (thisChar == '(' || thisChar == '"' || thisChar == '\\')
-                        {
-                            throw new Exception("Found invalid characters");
-                        }
-                        else if (thisChar == ')')
-                        {
-                            if (tuptuo.Count > 0)
-                            {
-                                throw new Exception("The closing parenthesis we detected wouldn't be the last character in the output string. This isn't acceptable because we aren't in a string");
-                            }
-
-                            state = NameParseState.Parenthesis;
-                            tuptuo.Add(thisChar);
-                        }
-                        else if (thisChar == '.')
-                        {
-                            // Found the end of this element.
-                            if (step == NameParseStep.FindMethod)
-                            {
-                                if (tuptuo.Count == 0)
-                                {
-                                    throw new Exception("This shouldn't be an empty string");
-                                }
-
-                                tuptuo.Reverse();
-                                metadataMethodName = string.Join(string.Empty, tuptuo);
-
-                                // Prep the next step
-                                tuptuo = new List<char>();
-                                step = NameParseStep.FindType;
-                            }
-                            else if (step == NameParseStep.FindType)
-                            {
-                                if (tuptuo.Count == 0)
-                                {
-                                    throw new Exception("This shouldn't be an empty string");
-                                }
-
-                                tuptuo.Reverse();
-                                metadataTypeName = string.Join(string.Empty, tuptuo);
-
-                                // Done
-                                step = NameParseStep.Done;
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            // Part of the name to add
-                            tuptuo.Add(thisChar);
-                        }
-                    }
-                    else if (state == NameParseState.Parenthesis)
-                    {
-                        if (thisChar == ')' || thisChar == '\\')
-                        {
-                            throw new Exception("Found invalid characters");
-                        }
-                        else if (thisChar == '(')
-                        {
-                            // If we found the beginning of the parenthesis block, we are back in default state
-                            state = NameParseState.Default;
-                            tuptuo.Add(thisChar);
-                        }
-                        else if (thisChar == '"')
-                        {
-                            // This must come at the end of a string, when escape characters aren't an issue, so we are
-                            // 'entering' string state, because of the reverse parsing.
-                            state = NameParseState.String;
-                            tuptuo.Add(thisChar);
-                        }
-                        else
-                        {
-                            tuptuo.Add(thisChar);
-                        }
-                    }
-                    else
-                    {
-                        // We are in String State.
-                        if (thisChar == '"')
-                        {
-                            if (eman.ElementAtOrDefault(i + 1) == '\\')
-                            {
-                                // The quote was escaped, so its atually a quote mark in a string
-                                tuptuo.Add(thisChar);
-                            }
-                            else
-                            {
-                                state = NameParseState.Parenthesis;
-                                tuptuo.Add(thisChar);
-                            }
-                        }
-                        else
-                        {
-                            tuptuo.Add(thisChar);
-                        }
-                    }
-                }
-
-                // We are done. If we are finding type, set that variable.
-                // Otherwise, ther was some issue, so leave the type blank.
-                if (step == NameParseStep.FindType)
-                {
-                    tuptuo.Reverse();
-                    metadataTypeName = string.Join(string.Empty, tuptuo);
-                }
-            }
-            catch (Exception)
-            {
-                // On exception, whipe out the type name
-                metadataTypeName = string.Empty;
-            }
-            finally
-            {
-                // If for any reason we don't have a Type Name
-                // we fall back on our safe option and notify the user
-                if (string.IsNullOrWhiteSpace(metadataTypeName))
-                {
-                    metadataTypeName = TestCaseParserUnknownType;
-                    metadataMethodName = fullyQualifedName;
-                    Console.WriteLine(string.Format(TestCaseParserErrorTemplate, fullyQualifedName));
-                }
-            }
-
-            return new Tuple<string, string>(metadataTypeName, metadataMethodName);
         }
 
         /// <summary>
@@ -431,14 +247,15 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         {
             TestResult result = e.Result;
 
-            var parsedName = ParseTestCaseName(result.TestCase.FullyQualifiedName);
+            var parsedName = TestCaseNameParser.Parse(result.TestCase.FullyQualifiedName);
 
             lock (this.resultsGuard)
             {
                 this.results.Add(new TestResultInfo(
                     result,
-                    parsedName.Item1,
-                    parsedName.Item2));
+                    parsedName.NamespaceName,
+                    parsedName.TypeName,
+                    parsedName.MethodName));
             }
         }
 
@@ -596,9 +413,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         {
             var testcaseElement = new XElement("testcase");
 
-            var namespaceClass = result.TestCase
-                .FullyQualifiedName
-                .Substring(0, result.TestCase.FullyQualifiedName.IndexOf(result.Name) - 1);
+            var namespaceClass = result.Namespace + "." + result.Type;
 
             testcaseElement.SetAttributeValue("classname", namespaceClass);
 
