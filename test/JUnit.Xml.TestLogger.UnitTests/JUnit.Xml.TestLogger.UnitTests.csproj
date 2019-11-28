@@ -16,4 +16,10 @@
     <ProjectReference Include="../../src/JUnit.Xml.TestLogger/JUnit.Xml.TestLogger.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Spekt.TestLogger">
+      <HintPath>..\..\..\testlogger\src\TestLogger\bin\Debug\netstandard1.5\Spekt.TestLogger.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

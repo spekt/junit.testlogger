@@ -15,10 +15,11 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
     using Microsoft.VisualStudio.TestPlatform.ObjectModel;
     using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
     using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
+    using Spekt.TestLogger;
 
     [FriendlyName(FriendlyName)]
     [ExtensionUri(ExtensionUri)]
-    public class JUnitXmlTestLogger : ITestLoggerWithParameters
+    public class JUnitXmlTestLogger : TestLogger
     {
         /// <summary>
         /// Uri used to uniquely identify the logger.
@@ -31,26 +32,8 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         public const string FriendlyName = "junit";
 
         // Dicionary keys for command line arguments.
-        public const string LogFilePathKey = "LogFilePath";
-        public const string LogFileNameKey = "LogFileName";
-        public const string ResultDirectoryKey = "TestRunDirectory";
         public const string MethodFormatKey = "MethodFormat";
         public const string FailureBodyFormatKey = "FailureBodyFormat";
-
-        private const string ResultStatusPassed = "Passed";
-        private const string ResultStatusFailed = "Failed";
-
-        private const string DateFormat = "yyyy-MM-ddT HH:mm:ssZ";
-
-        // Tokens to allow user to manipulate output file or directory names.
-        private const string AssemblyToken = "{assembly}";
-        private const string FrameworkToken = "{framework}";
-
-        private readonly object resultsGuard = new object();
-        private string outputFilePath;
-
-        private List<TestResultInfo> results;
-        private DateTime localStartTime;
 
         public enum MethodFormat
         {
@@ -87,92 +70,41 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
         public FailureBodyFormat FailureBodyFormatOption { get; private set; } = FailureBodyFormat.Default;
 
-        public static IEnumerable<TestSuite> GroupTestSuites(IEnumerable<TestSuite> suites)
+        public IEnumerable<TestSuite> GroupTestSuites(IEnumerable<TestSuite> suites)
         {
             var groups = suites;
             var roots = new List<TestSuite>();
             while (groups.Any())
             {
                 groups = groups.GroupBy(r =>
-                                {
-                                    var name = r.FullName.SubstringBeforeDot();
-                                    if (string.IsNullOrEmpty(name))
-                                    {
-                                        roots.Add(r);
-                                    }
+                {
+                    var name = r.FullName.SubstringBeforeDot();
+                    if (string.IsNullOrEmpty(name))
+                    {
+                        roots.Add(r);
+                    }
 
-                                    return name;
-                                })
-                                .OrderBy(g => g.Key)
-                                .Where(g => !string.IsNullOrEmpty(g.Key))
-                                .Select(g => AggregateTestSuites(g, "TestSuite", g.Key.SubstringAfterDot(), g.Key))
-                                .ToList();
+                    return name;
+                })
+                .OrderBy(g => g.Key)
+                .Where(g => !string.IsNullOrEmpty(g.Key))
+                .Select(g => this.AggregateTestSuites(g, "TestSuite", g.Key.SubstringAfterDot(), g.Key))
+                .ToList();
             }
 
             return roots;
         }
 
-        /// <summary>
-        /// Initialized called by dotnet test.
-        /// </summary>
-        /// <param name="events">Test logger event.</param>
-        /// <param name="testResultsDirPath">A single string is assumed to be the test result directory argument.</param>
-        public void Initialize(TestLoggerEvents events, string testResultsDirPath)
-        {
-            if (events == null)
-            {
-                throw new ArgumentNullException(nameof(events));
-            }
+        public override string GetExtensionUri() => ExtensionUri;
 
-            if (testResultsDirPath == null)
-            {
-                throw new ArgumentNullException(nameof(testResultsDirPath));
-            }
-
-            var outputPath = Path.Combine(testResultsDirPath, "TestResults.xml");
-            this.InitializeImpl(events, outputPath);
-        }
+        public override string GetFriendlyName() => FriendlyName;
 
         /// <summary>
         /// Initialized called by dotnet test.
         /// </summary>
-        /// <param name="events">Test logger event.</param>
         /// <param name="parameters">Dictionary of key value pairs provided by the user, semicolon delimited (i.e. 'key1=val1;key2=val2').</param>
-        public void Initialize(TestLoggerEvents events, Dictionary<string, string> parameters)
+        public override void Initialize(Dictionary<string, string> parameters)
         {
-            if (events == null)
-            {
-                throw new ArgumentNullException(nameof(events));
-            }
-
-            if (parameters == null)
-            {
-                throw new ArgumentNullException(nameof(parameters));
-            }
-
-            // Assist users with message when they entered invalid CLI options
-            var knownKeys = new List<string>() { ResultDirectoryKey, LogFilePathKey, LogFileNameKey, MethodFormatKey, FailureBodyFormatKey };
-            parameters.Where(x => knownKeys.Contains(x.Key) == false).ToList()
-                .ForEach(x => Console.WriteLine($"JunitXML Logger: The provided configuration item '{x.Key}' is not valid and will be ignored. Note, names are case sensitive."));
-
-            if (parameters.TryGetValue(LogFileNameKey, out string outputPathName) && parameters.TryGetValue(ResultDirectoryKey, out string outputFileDirectory))
-            {
-                outputPathName = Path.Combine(outputFileDirectory, outputPathName);
-                this.InitializeImpl(events, outputPathName);
-            }
-            else if (parameters.TryGetValue(LogFilePathKey, out string outputPath))
-            {
-                this.InitializeImpl(events, outputPath);
-            }
-            else if (parameters.TryGetValue(DefaultLoggerParameterNames.TestRunDirectory, out string outputDir))
-            {
-                this.Initialize(events, outputDir);
-            }
-            else
-            {
-                throw new ArgumentException($"JunitXML Logger: Expected {LogFilePathKey} or {DefaultLoggerParameterNames.TestRunDirectory} parameter", nameof(parameters));
-            }
-
             if (parameters.TryGetValue(MethodFormatKey, out string methodFormat))
             {
                 if (string.Equals(methodFormat.Trim(), "Class", StringComparison.OrdinalIgnoreCase))
@@ -211,99 +143,20 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         }
 
         /// <summary>
-        /// Called when a test message is received.
-        /// </summary>
-        internal void TestMessageHandler(object sender, TestRunMessageEventArgs e)
-        {
-        }
-
-        /// <summary>
-        /// Called when a test starts.
-        /// </summary>
-        internal void TestRunStartHandler(object sender, TestRunStartEventArgs e)
-        {
-            if (this.outputFilePath.Contains(AssemblyToken))
-            {
-                string assemblyPath = e.TestRunCriteria.AdapterSourceMap["_none_"].First();
-                string assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
-                this.outputFilePath = this.outputFilePath.Replace(AssemblyToken, assemblyName);
-            }
-
-            if (this.outputFilePath.Contains(FrameworkToken))
-            {
-                XmlDocument runSettings = new XmlDocument();
-                runSettings.LoadXml(e.TestRunCriteria.TestRunSettings);
-                XmlNode x = runSettings.GetElementsByTagName("TargetFrameworkVersion")[0];
-                string framework = x.InnerText;
-                framework = framework.Replace(",Version=v", string.Empty).Replace(".", string.Empty);
-                this.outputFilePath = this.outputFilePath.Replace(FrameworkToken, framework);
-            }
-        }
-
-        /// <summary>
-        /// Called when a test result is received.
-        /// </summary>
-        internal void TestResultHandler(object sender, TestResultEventArgs e)
-        {
-            TestResult result = e.Result;
-
-            var parsedName = TestCaseNameParser.Parse(result.TestCase.FullyQualifiedName);
-
-            lock (this.resultsGuard)
-            {
-                this.results.Add(new TestResultInfo(
-                    result,
-                    parsedName.NamespaceName,
-                    parsedName.TypeName,
-                    parsedName.MethodName));
-            }
-        }
-
-        /// <summary>
         /// Called when a test run is completed.
         /// </summary>
-        internal void TestRunCompleteHandler(object sender, TestRunCompleteEventArgs e)
+        /// <returns>Returns the log file as a string.</returns>
+        public override string BuildLog(List<TestResultInfo> resultList)
         {
-            try
-            {
-                List<TestResultInfo> resultList;
-                lock (this.resultsGuard)
-                {
-                    resultList = this.results;
-                    this.results = new List<TestResultInfo>();
-                }
-
-                var doc = new XDocument(this.CreateTestSuitesElement(resultList));
-
-                // Create directory if not exist
-                var loggerFileDirPath = Path.GetDirectoryName(this.outputFilePath);
-                if (!Directory.Exists(loggerFileDirPath))
-                {
-                    Directory.CreateDirectory(loggerFileDirPath);
-                }
-
-                using (var f = File.Create(this.outputFilePath))
-                {
-                    doc.Save(f);
-                }
-
-                var resultsFileMessage = string.Format(CultureInfo.CurrentCulture, "JunitXML Logger - Results File: {0}", this.outputFilePath);
-                Console.WriteLine(Environment.NewLine + resultsFileMessage);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("JunitXML Logger: Threw an unhandeled exception. ");
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.Source);
-                throw;
-            }
+            var doc = new XDocument(this.CreateTestSuitesElement(resultList));
+            return doc.ToString();
         }
 
-        private static TestSuite AggregateTestSuites(
-            IEnumerable<TestSuite> suites,
-            string testSuiteType,
-            string name,
-            string fullName)
+        private TestSuite AggregateTestSuites(
+           IEnumerable<TestSuite> suites,
+           string testSuiteType,
+           string name,
+           string fullName)
         {
             var element = new XElement("test-suite");
 
@@ -356,23 +209,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             };
         }
 
-        private void InitializeImpl(TestLoggerEvents events, string outputPath)
-        {
-            events.TestRunMessage += this.TestMessageHandler;
-            events.TestRunStart += this.TestRunStartHandler;
-            events.TestResult += this.TestResultHandler;
-            events.TestRunComplete += this.TestRunCompleteHandler;
-
-            this.outputFilePath = Path.GetFullPath(outputPath);
-
-            lock (this.resultsGuard)
-            {
-                this.results = new List<TestResultInfo>();
-            }
-
-            this.localStartTime = DateTime.UtcNow;
-        }
-
         private XElement CreateTestSuitesElement(List<TestResultInfo> results)
         {
             var assemblies = results.Select(x => x.AssemblyPath).Distinct().ToList();
@@ -403,7 +239,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             element.SetAttributeValue("failures", results.Where(x => x.Outcome == TestOutcome.Failed).Count());
             element.SetAttributeValue("errors", 0); // looks like this isn't supported by .net?
             element.SetAttributeValue("time", results.Sum(x => x.Duration.TotalSeconds));
-            element.SetAttributeValue("timestamp", this.localStartTime.ToString(DateFormat, CultureInfo.InvariantCulture));
+            element.SetAttributeValue("timestamp", this.LocalStartTime.ToString(DateFormat, CultureInfo.InvariantCulture));
             element.SetAttributeValue("hostname", results.First().TestCase.ExecutorUri);
 
             return element;

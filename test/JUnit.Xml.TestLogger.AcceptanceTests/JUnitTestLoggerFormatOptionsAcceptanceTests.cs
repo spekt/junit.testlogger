@@ -10,6 +10,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
     using System.Xml.XPath;
     using Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Spekt.TestLogger;
 
     /// <summary>
     /// Acceptance tests evaluate the most recent output of the build.ps1 script, NOT the most
@@ -79,7 +80,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
             foreach (var testcase in testcases)
             {
-                var parsedName = TestCaseNameParser.Parse(testcase.Attribute("name").Value);
+                var parsedName = TestCaseNameParser.Parse(testcase.Attribute("name").Value, "loggerName");
 
                 // A method name only will not be parsable into two pieces
                 Assert.AreEqual(parsedName.TypeName, TestCaseNameParser.TestCaseParserUnknownType);
@@ -100,7 +101,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
             foreach (var testcase in testcases)
             {
-                var parsedName = TestCaseNameParser.Parse(testcase.Attribute("name").Value);
+                var parsedName = TestCaseNameParser.Parse(testcase.Attribute("name").Value, "loggerName");
 
                 // If the name is parsable into two pieces, then we have a two piece name
                 // and consider that to be a passing result.
@@ -122,7 +123,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
             foreach (var testcase in testcases)
             {
-                var parsedName = TestCaseNameParser.Parse(testcase.Attribute("name").Value);
+                var parsedName = TestCaseNameParser.Parse(testcase.Attribute("name").Value, "loggerName");
 
                 // We expect the full name would be the class name plus the parsed method
                 var expectedFullName = parsedName.NamespaceName + "." + parsedName.TypeName + "." + parsedName.MethodName;

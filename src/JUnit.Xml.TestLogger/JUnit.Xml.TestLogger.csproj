@@ -17,4 +17,10 @@
     <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="15.5.0" />
     <PackageReference Include="System.ValueTuple" Version="4.3.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Spekt.TestLogger">
+      <HintPath>..\..\..\testlogger\src\TestLogger\bin\Debug\netstandard1.5\Spekt.TestLogger.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>
