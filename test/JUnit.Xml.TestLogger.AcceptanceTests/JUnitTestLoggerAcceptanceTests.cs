@@ -92,5 +92,13 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
             Assert.IsTrue(testcases.Where(x => x.Descendants().Any())
                                    .All(x => x.Descendants().First().Attribute("type").Value == "failure"));
         }
+
+        [TestMethod]
+        public void LoggedXmlValidatesAgainstXsdSchema()
+        {
+            var validator = new JunitXmlValidator();
+            var result = validator.IsValid(File.ReadAllText(this.resultsFile));
+            Assert.IsTrue(result);
+        }
     }
 }
