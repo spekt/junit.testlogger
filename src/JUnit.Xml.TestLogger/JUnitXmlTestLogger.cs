@@ -495,6 +495,12 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
                 testcaseElement.Add(failureElement);
             }
+            else if (result.Outcome == TestOutcome.Skipped)
+            {
+                var skippedElement = new XElement("skipped");
+
+                testcaseElement.Add(skippedElement);
+            }
 
             return testcaseElement;
         }

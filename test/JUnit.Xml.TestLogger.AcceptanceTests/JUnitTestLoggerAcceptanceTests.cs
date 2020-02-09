@@ -79,13 +79,20 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
             Assert.IsTrue(testcases.All(x => double.TryParse(x.Attribute("time").Value, out _)));
 
             // Check failures
-            Assert.AreEqual(14, testcases.Where(x => x.Descendants().Any()).Count());
-            Assert.IsTrue(testcases.Where(x => x.Descendants().Any())
-                                   .All(x => x.Descendants().Count() == 1));
-            Assert.IsTrue(testcases.Where(x => x.Descendants().Any())
-                                   .All(x => x.Descendants().First().Name.LocalName == "failure"));
-            Assert.IsTrue(testcases.Where(x => x.Descendants().Any())
-                                   .All(x => x.Descendants().First().Attribute("type").Value == "failure"));
+            var failures = testcases
+                .Where(x => x.Descendants().Any(y => y.Name.LocalName == "failure"))
+                .ToList();
+
+            Assert.AreEqual(14, failures.Count());
+            Assert.IsTrue(failures.All(x => x.Descendants().Count() == 1));
+            Assert.IsTrue(failures.All(x => x.Descendants().First().Attribute("type").Value == "failure"));
+
+            // Check failures
+            var skipps = testcases
+                .Where(x => x.Descendants().Any(y => y.Name.LocalName == "skipped"))
+                .ToList();
+
+            Assert.AreEqual(6, skipps.Count());
         }
 
         [TestMethod]
