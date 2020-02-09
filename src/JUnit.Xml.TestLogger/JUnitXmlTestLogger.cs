@@ -36,6 +36,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         public const string ResultDirectoryKey = "TestRunDirectory";
         public const string MethodFormatKey = "MethodFormat";
         public const string FailureBodyFormatKey = "FailureBodyFormat";
+        public const string FileEncodingKey = "FileEncoding";
 
         private const string ResultStatusPassed = "Passed";
         private const string ResultStatusFailed = "Failed";
@@ -81,9 +82,24 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             Verbose
         }
 
+        public enum FileEncoding
+        {
+            /// <summary>
+            /// UTF8
+            /// </summary>
+            UTF8,
+
+            /// <summary>
+            /// UTF8 Bom
+            /// </summary>
+            UTF8Bom
+        }
+
         public MethodFormat MethodFormatOption { get; private set; } = MethodFormat.Default;
 
         public FailureBodyFormat FailureBodyFormatOption { get; private set; } = FailureBodyFormat.Default;
+
+        public FileEncoding FileEncodingOption { get; private set; } = FileEncoding.UTF8Bom;
 
         public static IEnumerable<TestSuite> GroupTestSuites(IEnumerable<TestSuite> suites)
         {
@@ -92,15 +108,15 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             while (groups.Any())
             {
                 groups = groups.GroupBy(r =>
-                                {
-                                    var name = r.FullName.SubstringBeforeDot();
-                                    if (string.IsNullOrEmpty(name))
-                                    {
-                                        roots.Add(r);
-                                    }
+                {
+                    var name = r.FullName.SubstringBeforeDot();
+                    if (string.IsNullOrEmpty(name))
+                    {
+                        roots.Add(r);
+                    }
 
-                                    return name;
-                                })
+                    return name;
+                })
                                 .OrderBy(g => g.Key)
                                 .Where(g => !string.IsNullOrEmpty(g.Key))
                                 .Select(g => AggregateTestSuites(g, "TestSuite", g.Key.SubstringAfterDot(), g.Key))
@@ -206,6 +222,22 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                     Console.WriteLine($"JunitXML Logger: The provided Failure Body Format '{failureFormat}' is not a recognized option. Using default");
                 }
             }
+
+            if (parameters.TryGetValue(FileEncodingKey, out string fileEncoding))
+            {
+                if (string.Equals(fileEncoding.Trim(), "UTF8Bom", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.FileEncodingOption = FileEncoding.UTF8Bom;
+                }
+                else if (string.Equals(fileEncoding.Trim(), "UTF8", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.FileEncodingOption = FileEncoding.UTF8;
+                }
+                else
+                {
+                    Console.WriteLine($"JunitXML Logger: The provided File Encoding '{failureFormat}' is not a recognized option. Using default");
+                }
+            }
         }
 
         /// <summary>
@@ -280,9 +312,18 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                     Directory.CreateDirectory(loggerFileDirPath);
                 }
 
+                var settings = new XmlWriterSettings()
+                {
+                    Encoding = new UTF8Encoding(this.FileEncodingOption == FileEncoding.UTF8 ? false : true),
+                    Indent = true,
+                };
+
                 using (var f = File.Create(this.outputFilePath))
                 {
-                    doc.Save(f);
+                    using (var w = XmlWriter.Create(f, settings))
+                    {
+                        doc.Save(w);
+                    }
                 }
 
                 var resultsFileMessage = string.Format(CultureInfo.CurrentCulture, "JunitXML Logger - Results File: {0}", this.outputFilePath);

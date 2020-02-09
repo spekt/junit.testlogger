@@ -93,6 +93,15 @@ When set to default, the body will contain only the exception which is captured 
 - FailureBodyFormat=Default
 - FailureBodyFormat=Verbose
 
+#### FileEncoding
+
+When set to default, file encoding will be UTF-8 with BOM. Use this option if you need plain UTF-8 encoding.
+
+##### Allowed Values
+
+- FileEncoding=Utf8
+- FileEncoding=Utf8Bom  (This is the default, and does not need to be specified explicitly.)
+
 ### Saving Multiple Result Files In One Directory
 
 By default, every test project generates an xml report with the same directory and file name. The tokens {framework} and {assembly} may be placed anywhere in the directory or file names to customize the output location. This is **critical**, when multiple test reports will be written to the same directory, as in the following example. Otherwise, the files would use identical names, and the second output file written would overwrite the first.
