@@ -386,8 +386,14 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         {
             var testCaseElements = results.Select(a => this.CreateTestCaseElement(a));
 
-            // Adding required properties element without any contents, which must occur before test cases elements.
-            var element = new XElement("testsuite", new XElement("properties"), testCaseElements);
+            // Adding required properties, system-out, and system-err elements in the correct
+            // positions as required by the xsd.
+            var element = new XElement(
+                "testsuite",
+                new XElement("properties"),
+                testCaseElements,
+                new XElement("system-out", "Junit Logger does not log standard output"),
+                new XElement("system-err", "Junit Logger does not log error output"));
 
             element.SetAttributeValue("name", Path.GetFileName(results.First().AssemblyPath));
 
