@@ -379,12 +379,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
             var element = new XElement("testsuites", testsuiteElements);
 
-            element.SetAttributeValue("name", Path.GetFileName(results.First().AssemblyPath));
-
-            element.SetAttributeValue("tests", results.Count);
-            element.SetAttributeValue("failures", results.Where(x => x.Outcome == TestOutcome.Failed).Count());
-            element.SetAttributeValue("time", results.Sum(x => x.Duration.TotalSeconds));
-
             return element;
         }
 
@@ -392,7 +386,8 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         {
             var testCaseElements = results.Select(a => this.CreateTestCaseElement(a));
 
-            var element = new XElement("testsuite", testCaseElements);
+            // Adding required properties element without any contents, which must occur before test cases elements.
+            var element = new XElement("testsuite", new XElement("properties"), testCaseElements);
 
             element.SetAttributeValue("name", Path.GetFileName(results.First().AssemblyPath));
 
@@ -403,6 +398,8 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             element.SetAttributeValue("time", results.Sum(x => x.Duration.TotalSeconds));
             element.SetAttributeValue("timestamp", this.utcStartTime.ToString("s"));
             element.SetAttributeValue("hostname", results.First().TestCase.ExecutorUri);
+            element.SetAttributeValue("id", 0); // we never output multiple, so this is always zero.
+            element.SetAttributeValue("package", Path.GetFileName(results.First().AssemblyPath));
 
             return element;
         }

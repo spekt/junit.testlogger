@@ -46,11 +46,6 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
             var node = this.resultsXml.XPathSelectElement("/testsuites");
 
             Assert.IsNotNull(node);
-            Assert.AreEqual("JUnit.Xml.TestLogger.NetCore.Tests.dll", node.Attribute(XName.Get("name")).Value);
-            Assert.AreEqual("52", node.Attribute(XName.Get("tests")).Value);
-            Assert.AreEqual("14", node.Attribute(XName.Get("failures")).Value);
-
-            Convert.ToDouble(node.Attribute(XName.Get("time")).Value);
         }
 
         [TestMethod]
