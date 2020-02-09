@@ -426,7 +426,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             }
 
             testcaseElement.SetAttributeValue("file", result.TestCase.Source);
-            testcaseElement.SetAttributeValue("time", result.Duration.TotalSeconds);
+            testcaseElement.SetAttributeValue("time", result.Duration.TotalSeconds.ToString("0.000000"));
 
             if (result.Outcome == TestOutcome.Failed)
             {
