@@ -488,7 +488,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
                 failureBodySB.AppendLine(result.ErrorStackTrace);
 
-                var failureElement = new XElement("failure", failureBodySB.ToString());
+                var failureElement = new XElement("failure", failureBodySB.ToString().Trim());
 
                 failureElement.SetAttributeValue("type", "failure"); // TODO are there failure types?
                 failureElement.SetAttributeValue("message", result.ErrorMessage);

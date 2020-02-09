@@ -61,7 +61,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
                 var message = failure.Attribute("message").Value.Replace("\r", string.Empty).Replace("\n", string.Empty);
                 var body = failure.Value.Replace("\r", string.Empty).Replace("\n", string.Empty);
 
-                Assert.IsTrue(body.StartsWith(message));
+                Assert.IsTrue(body.Trim().StartsWith(message.Trim()));
             }
         }
 
