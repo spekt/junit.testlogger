@@ -40,8 +40,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         private const string ResultStatusPassed = "Passed";
         private const string ResultStatusFailed = "Failed";
 
-        private const string DateFormat = "yyyy-MM-ddT HH:mm:ssZ";
-
         // Tokens to allow user to manipulate output file or directory names.
         private const string AssemblyToken = "{assembly}";
         private const string FrameworkToken = "{framework}";
@@ -50,7 +48,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         private string outputFilePath;
 
         private List<TestResultInfo> results;
-        private DateTime localStartTime;
+        private DateTime utcStartTime;
 
         public enum MethodFormat
         {
@@ -370,7 +368,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                 this.results = new List<TestResultInfo>();
             }
 
-            this.localStartTime = DateTime.UtcNow;
+            this.utcStartTime = DateTime.UtcNow;
         }
 
         private XElement CreateTestSuitesElement(List<TestResultInfo> results)
@@ -403,7 +401,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             element.SetAttributeValue("failures", results.Where(x => x.Outcome == TestOutcome.Failed).Count());
             element.SetAttributeValue("errors", 0); // looks like this isn't supported by .net?
             element.SetAttributeValue("time", results.Sum(x => x.Duration.TotalSeconds));
-            element.SetAttributeValue("timestamp", this.localStartTime.ToString(DateFormat, CultureInfo.InvariantCulture));
+            element.SetAttributeValue("timestamp", this.utcStartTime.ToString("s"));
             element.SetAttributeValue("hostname", results.First().TestCase.ExecutorUri);
 
             return element;
