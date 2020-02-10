@@ -472,7 +472,12 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                 testcaseElement.SetAttributeValue("name", result.Name);
             }
 
-            testcaseElement.SetAttributeValue("time", result.Duration.TotalSeconds.ToString("0.000000"));
+            // Ensure time value is never zero because gitlab treats 0 like its null.
+            // 0.1 micro seconds should be low enough it won't interfere with anyone
+            // monitoring test duration.
+            testcaseElement.SetAttributeValue(
+                "time",
+                Math.Max(0.0000001f, result.Duration.TotalSeconds).ToString("0.0000000"));
 
             if (result.Outcome == TestOutcome.Failed)
             {
