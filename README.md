@@ -19,7 +19,7 @@ If you're looking for `Nunit`, `Xunit` or `appveyor` loggers, visit following re
 
 ## Usage
 
-JUnit logger can generate xml reports in the JUnit format. The JUnit format seems to be variable across different implementations, with the JUnit 5 repository referring to the [Ant Junit Format](https://github.com/windyroad/JUnit-Schema) as a de-facto standard. This project does not implement that standard exactly. Please [refer to a sample file](docs/assets/TestResults.xml) to see an example of which parts of the format have been implemented. If you find that this format is missing some feature required by your CI/CD system, please open an issue.
+The JUnit Test Logger generates xml reports in the [Ant Junit Format](https://github.com/windyroad/JUnit-Schema), which the JUnit 5 repository refers to as the de-facto standard. While the generated xml complies with that schema, it does not contain values in every case. For example, the logger currently does not log any `properties`. Please [refer to a sample file](docs/assets/TestResults.xml) to see an example. If you find that the format is missing data required by your CI/CD system, please open an issue or PR.
 
 ### Default Behavior
 
