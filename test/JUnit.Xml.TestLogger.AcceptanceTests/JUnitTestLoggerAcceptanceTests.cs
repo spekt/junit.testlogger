@@ -88,11 +88,11 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
             Assert.IsTrue(failures.All(x => x.Descendants().First().Attribute("type").Value == "failure"));
 
             // Check failures
-            var skipps = testcases
+            var skips = testcases
                 .Where(x => x.Descendants().Any(y => y.Name.LocalName == "skipped"))
                 .ToList();
 
-            Assert.AreEqual(6, skipps.Count());
+            Assert.AreEqual(6, skips.Count());
         }
 
         [TestMethod]

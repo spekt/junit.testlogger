@@ -35,12 +35,12 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
             xmlReaderSettings.Schemas.Add(schema);
             xmlReaderSettings.ValidationType = ValidationType.Schema;
 
-            var veh = new ValidationEventHandler(this.BooksSettingsValidationEventHandler);
+            var veh = new ValidationEventHandler(this.XmlValidationEventHandler);
 
             xmlReaderSettings.ValidationEventHandler += veh;
-            using (XmlReader books = XmlReader.Create(xmlReader, xmlReaderSettings))
+            using (XmlReader reader = XmlReader.Create(xmlReader, xmlReaderSettings))
             {
-                while (books.Read())
+                while (reader.Read())
                 {
                 }
             }
@@ -50,7 +50,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
             return this.failures.Any() == false;
         }
 
-        private void BooksSettingsValidationEventHandler(object sender, ValidationEventArgs e)
+        private void XmlValidationEventHandler(object sender, ValidationEventArgs e)
         {
             this.failures.Add(e.Exception);
         }
