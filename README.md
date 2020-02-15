@@ -95,12 +95,12 @@ When set to default, the body will contain only the exception which is captured 
 
 #### FileEncoding
 
-When set to default, file encoding will be UTF-8 with BOM. Use this option if you need plain UTF-8 encoding.
+When set to default, file encoding will be UTF-8. Use this option if you need UTF-8 with BOM encoding.
 
 ##### Allowed Values
 
-- FileEncoding=Utf8
-- FileEncoding=Utf8Bom  (This is the default, and does not need to be specified explicitly.)
+- FileEncoding=Utf8 (This is the default, and does not need to be specified explicitly.)
+- FileEncoding=Utf8Bom  
 
 ### Saving Multiple Result Files In One Directory
 

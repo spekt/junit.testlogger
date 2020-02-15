@@ -99,7 +99,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
         public FailureBodyFormat FailureBodyFormatOption { get; private set; } = FailureBodyFormat.Default;
 
-        public FileEncoding FileEncodingOption { get; private set; } = FileEncoding.UTF8Bom;
+        public FileEncoding FileEncodingOption { get; private set; } = FileEncoding.UTF8;
 
         public static IEnumerable<TestSuite> GroupTestSuites(IEnumerable<TestSuite> suites)
         {
@@ -314,7 +314,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
                 var settings = new XmlWriterSettings()
                 {
-                    Encoding = new UTF8Encoding(this.FileEncodingOption == FileEncoding.UTF8 ? false : true),
+                    Encoding = new UTF8Encoding(this.FileEncodingOption == FileEncoding.UTF8Bom),
                     Indent = true,
                 };
 
