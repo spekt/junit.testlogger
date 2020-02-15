@@ -36,11 +36,10 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         public const string ResultDirectoryKey = "TestRunDirectory";
         public const string MethodFormatKey = "MethodFormat";
         public const string FailureBodyFormatKey = "FailureBodyFormat";
+        public const string FileEncodingKey = "FileEncoding";
 
         private const string ResultStatusPassed = "Passed";
         private const string ResultStatusFailed = "Failed";
-
-        private const string DateFormat = "yyyy-MM-ddT HH:mm:ssZ";
 
         // Tokens to allow user to manipulate output file or directory names.
         private const string AssemblyToken = "{assembly}";
@@ -50,7 +49,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         private string outputFilePath;
 
         private List<TestResultInfo> results;
-        private DateTime localStartTime;
+        private DateTime utcStartTime;
 
         public enum MethodFormat
         {
@@ -83,9 +82,24 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             Verbose
         }
 
+        public enum FileEncoding
+        {
+            /// <summary>
+            /// UTF8
+            /// </summary>
+            UTF8,
+
+            /// <summary>
+            /// UTF8 Bom
+            /// </summary>
+            UTF8Bom
+        }
+
         public MethodFormat MethodFormatOption { get; private set; } = MethodFormat.Default;
 
         public FailureBodyFormat FailureBodyFormatOption { get; private set; } = FailureBodyFormat.Default;
+
+        public FileEncoding FileEncodingOption { get; private set; } = FileEncoding.UTF8;
 
         public static IEnumerable<TestSuite> GroupTestSuites(IEnumerable<TestSuite> suites)
         {
@@ -94,15 +108,15 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             while (groups.Any())
             {
                 groups = groups.GroupBy(r =>
-                                {
-                                    var name = r.FullName.SubstringBeforeDot();
-                                    if (string.IsNullOrEmpty(name))
-                                    {
-                                        roots.Add(r);
-                                    }
+                {
+                    var name = r.FullName.SubstringBeforeDot();
+                    if (string.IsNullOrEmpty(name))
+                    {
+                        roots.Add(r);
+                    }
 
-                                    return name;
-                                })
+                    return name;
+                })
                                 .OrderBy(g => g.Key)
                                 .Where(g => !string.IsNullOrEmpty(g.Key))
                                 .Select(g => AggregateTestSuites(g, "TestSuite", g.Key.SubstringAfterDot(), g.Key))
@@ -208,6 +222,22 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                     Console.WriteLine($"JunitXML Logger: The provided Failure Body Format '{failureFormat}' is not a recognized option. Using default");
                 }
             }
+
+            if (parameters.TryGetValue(FileEncodingKey, out string fileEncoding))
+            {
+                if (string.Equals(fileEncoding.Trim(), "UTF8Bom", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.FileEncodingOption = FileEncoding.UTF8Bom;
+                }
+                else if (string.Equals(fileEncoding.Trim(), "UTF8", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.FileEncodingOption = FileEncoding.UTF8;
+                }
+                else
+                {
+                    Console.WriteLine($"JunitXML Logger: The provided File Encoding '{failureFormat}' is not a recognized option. Using default");
+                }
+            }
         }
 
         /// <summary>
@@ -282,9 +312,18 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                     Directory.CreateDirectory(loggerFileDirPath);
                 }
 
+                var settings = new XmlWriterSettings()
+                {
+                    Encoding = new UTF8Encoding(this.FileEncodingOption == FileEncoding.UTF8Bom),
+                    Indent = true,
+                };
+
                 using (var f = File.Create(this.outputFilePath))
                 {
-                    doc.Save(f);
+                    using (var w = XmlWriter.Create(f, settings))
+                    {
+                        doc.Save(w);
+                    }
                 }
 
                 var resultsFileMessage = string.Format(CultureInfo.CurrentCulture, "JunitXML Logger - Results File: {0}", this.outputFilePath);
@@ -370,7 +409,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                 this.results = new List<TestResultInfo>();
             }
 
-            this.localStartTime = DateTime.UtcNow;
+            this.utcStartTime = DateTime.UtcNow;
         }
 
         private XElement CreateTestSuitesElement(List<TestResultInfo> results)
@@ -381,12 +420,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
             var element = new XElement("testsuites", testsuiteElements);
 
-            element.SetAttributeValue("name", Path.GetFileName(results.First().AssemblyPath));
-
-            element.SetAttributeValue("tests", results.Count);
-            element.SetAttributeValue("failures", results.Where(x => x.Outcome == TestOutcome.Failed).Count());
-            element.SetAttributeValue("time", results.Sum(x => x.Duration.TotalSeconds));
-
             return element;
         }
 
@@ -394,7 +427,14 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         {
             var testCaseElements = results.Select(a => this.CreateTestCaseElement(a));
 
-            var element = new XElement("testsuite", testCaseElements);
+            // Adding required properties, system-out, and system-err elements in the correct
+            // positions as required by the xsd.
+            var element = new XElement(
+                "testsuite",
+                new XElement("properties"),
+                testCaseElements,
+                new XElement("system-out", "Junit Logger does not log standard output"),
+                new XElement("system-err", "Junit Logger does not log error output"));
 
             element.SetAttributeValue("name", Path.GetFileName(results.First().AssemblyPath));
 
@@ -403,8 +443,10 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             element.SetAttributeValue("failures", results.Where(x => x.Outcome == TestOutcome.Failed).Count());
             element.SetAttributeValue("errors", 0); // looks like this isn't supported by .net?
             element.SetAttributeValue("time", results.Sum(x => x.Duration.TotalSeconds));
-            element.SetAttributeValue("timestamp", this.localStartTime.ToString(DateFormat, CultureInfo.InvariantCulture));
+            element.SetAttributeValue("timestamp", this.utcStartTime.ToString("s"));
             element.SetAttributeValue("hostname", results.First().TestCase.ExecutorUri);
+            element.SetAttributeValue("id", 0); // we never output multiple, so this is always zero.
+            element.SetAttributeValue("package", Path.GetFileName(results.First().AssemblyPath));
 
             return element;
         }
@@ -430,8 +472,12 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                 testcaseElement.SetAttributeValue("name", result.Name);
             }
 
-            testcaseElement.SetAttributeValue("file", result.TestCase.Source);
-            testcaseElement.SetAttributeValue("time", result.Duration.TotalSeconds);
+            // Ensure time value is never zero because gitlab treats 0 like its null.
+            // 0.1 micro seconds should be low enough it won't interfere with anyone
+            // monitoring test duration.
+            testcaseElement.SetAttributeValue(
+                "time",
+                Math.Max(0.0000001f, result.Duration.TotalSeconds).ToString("0.0000000"));
 
             if (result.Outcome == TestOutcome.Failed)
             {
@@ -447,12 +493,18 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
                 failureBodySB.AppendLine(result.ErrorStackTrace);
 
-                var failureElement = new XElement("failure", failureBodySB.ToString());
+                var failureElement = new XElement("failure", failureBodySB.ToString().Trim());
 
                 failureElement.SetAttributeValue("type", "failure"); // TODO are there failure types?
                 failureElement.SetAttributeValue("message", result.ErrorMessage);
 
                 testcaseElement.Add(failureElement);
+            }
+            else if (result.Outcome == TestOutcome.Skipped)
+            {
+                var skippedElement = new XElement("skipped");
+
+                testcaseElement.Add(skippedElement);
             }
 
             return testcaseElement;
