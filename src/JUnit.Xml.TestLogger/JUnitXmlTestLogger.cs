@@ -235,7 +235,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                 }
                 else
                 {
-                    Console.WriteLine($"JunitXML Logger: The provided File Encoding '{failureFormat}' is not a recognized option. Using default");
+                    Console.WriteLine($"JunitXML Logger: The provided File Encoding '{fileEncoding}' is not a recognized option. Using default");
                 }
             }
         }
