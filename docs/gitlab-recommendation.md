@@ -42,4 +42,4 @@ Test:
 
 ## Notes
 
-Screen shots and behavior are current as of GitLab Community Edition 11.11.8. 
+Screen shots and behavior are current as of GitLab Enterprise Edition 13.0.0-pre.

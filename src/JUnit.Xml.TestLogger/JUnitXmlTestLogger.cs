@@ -1,5 +1,5 @@
-﻿// Copyright (c) Spekt Contributors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+﻿// Copyright (c) Spekt Contributors. All rights reserved. Licensed under the MIT license. See
+// LICENSE file in the project root for full license information.
 
 namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 {
@@ -9,7 +9,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
     using System.IO;
     using System.Linq;
     using System.Text;
-    using System.Text.RegularExpressions;
     using System.Xml;
     using System.Xml.Linq;
     using Microsoft.VisualStudio.TestPlatform.ObjectModel;
@@ -32,6 +31,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
         // Dicionary keys for command line arguments.
         public const string LogFilePathKey = "LogFilePath";
+
         public const string LogFileNameKey = "LogFileName";
         public const string ResultDirectoryKey = "TestRunDirectory";
         public const string MethodFormatKey = "MethodFormat";
@@ -43,10 +43,21 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
         // Tokens to allow user to manipulate output file or directory names.
         private const string AssemblyToken = "{assembly}";
+
         private const string FrameworkToken = "{framework}";
 
         private readonly object resultsGuard = new object();
         private string outputFilePath;
+
+        /// <summary>
+        /// Recieves information messages, along with StdOut from test methods.
+        /// </summary>
+        private StringBuilder stdOut = new StringBuilder();
+
+        /// <summary>
+        /// Recieves both warning and error messages.
+        /// </summary>
+        private StringBuilder stdErr = new StringBuilder();
 
         private List<TestResultInfo> results;
         private DateTime utcStartTime;
@@ -130,7 +141,9 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         /// Initialized called by dotnet test.
         /// </summary>
         /// <param name="events">Test logger event.</param>
-        /// <param name="testResultsDirPath">A single string is assumed to be the test result directory argument.</param>
+        /// <param name="testResultsDirPath">
+        /// A single string is assumed to be the test result directory argument.
+        /// </param>
         public void Initialize(TestLoggerEvents events, string testResultsDirPath)
         {
             if (events == null)
@@ -151,7 +164,9 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         /// Initialized called by dotnet test.
         /// </summary>
         /// <param name="events">Test logger event.</param>
-        /// <param name="parameters">Dictionary of key value pairs provided by the user, semicolon delimited (i.e. 'key1=val1;key2=val2').</param>
+        /// <param name="parameters">
+        /// Dictionary of key value pairs provided by the user, semicolon delimited (i.e. 'key1=val1;key2=val2').
+        /// </param>
         public void Initialize(TestLoggerEvents events, Dictionary<string, string> parameters)
         {
             if (events == null)
@@ -241,10 +256,19 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         }
 
         /// <summary>
-        /// Called when a test message is received.
+        /// Called when a test message is received. These messages are coming from the test
+        /// framework, and don't contain standard output produced by test code.
         /// </summary>
         internal void TestMessageHandler(object sender, TestRunMessageEventArgs e)
         {
+            if (e.Level == TestMessageLevel.Informational)
+            {
+                this.stdOut.AppendLine(e.Message);
+            }
+            else
+            {
+                this.stdErr.AppendLine(e.Message);
+            }
         }
 
         /// <summary>
@@ -277,8 +301,17 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         {
             TestResult result = e.Result;
 
-            var parsedName = TestCaseNameParser.Parse(result.TestCase.FullyQualifiedName);
+            if (e.Result.Messages.Count > 0)
+            {
+                this.stdOut.AppendLine();
+                this.stdOut.AppendLine(result.TestCase.FullyQualifiedName);
+                this.stdOut.AppendLine(
+                    string.Join(
+                        Environment.NewLine,
+                        e.Result.Messages.Select(x => x.Text)));
+            }
 
+            var parsedName = TestCaseNameParser.Parse(result.TestCase.FullyQualifiedName);
             lock (this.resultsGuard)
             {
                 this.results.Add(new TestResultInfo(
@@ -428,13 +461,14 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             var testCaseElements = results.Select(a => this.CreateTestCaseElement(a));
 
             // Adding required properties, system-out, and system-err elements in the correct
-            // positions as required by the xsd.
+            // positions as required by the xsd. In system-out collapse consequtive newlines to a
+            // single newline.
             var element = new XElement(
                 "testsuite",
                 new XElement("properties"),
                 testCaseElements,
-                new XElement("system-out", "Junit Logger does not log standard output"),
-                new XElement("system-err", "Junit Logger does not log error output"));
+                new XElement("system-out", this.stdOut.ToString().Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine)),
+                new XElement("system-err", this.stdErr.ToString()));
 
             element.SetAttributeValue("name", Path.GetFileName(results.First().AssemblyPath));
 
@@ -472,9 +506,8 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                 testcaseElement.SetAttributeValue("name", result.Name);
             }
 
-            // Ensure time value is never zero because gitlab treats 0 like its null.
-            // 0.1 micro seconds should be low enough it won't interfere with anyone
-            // monitoring test duration.
+            // Ensure time value is never zero because gitlab treats 0 like its null. 0.1 micro
+            // seconds should be low enough it won't interfere with anyone monitoring test duration.
             testcaseElement.SetAttributeValue(
                 "time",
                 Math.Max(0.0000001f, result.Duration.TotalSeconds).ToString("0.0000000"));
@@ -487,11 +520,22 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                 {
                     failureBodySB.AppendLine(result.ErrorMessage);
 
-                    // Stack trace included to mimic the normal test output
+                    // Stack trace label included to mimic the normal test output
                     failureBodySB.AppendLine("Stack Trace:");
                 }
 
                 failureBodySB.AppendLine(result.ErrorStackTrace);
+
+                if (this.FailureBodyFormatOption == FailureBodyFormat.Verbose &&
+                    result.Messages.Count > 0)
+                {
+                    failureBodySB.AppendLine("Standard Output:");
+
+                    failureBodySB.AppendLine(
+                        string.Join(
+                            Environment.NewLine,
+                            result.Messages.Select(x => x.Text)));
+                }
 
                 var failureElement = new XElement("failure", failureBodySB.ToString().Trim());
 

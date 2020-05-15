@@ -1,5 +1,5 @@
-// Copyright (c) Spekt Contributors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// Copyright (c) Spekt Contributors. All rights reserved. Licensed under the MIT license. See
+// LICENSE file in the project root for full license information.
 
 namespace JUnit.Xml.TestLogger.AcceptanceTests
 {
@@ -93,6 +93,17 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
                 .ToList();
 
             Assert.AreEqual(6, skips.Count());
+        }
+
+        [TestMethod]
+        public void TestResultFileShouldContainStandardOut()
+        {
+            var node = this.resultsXml.XPathSelectElement("/testsuites/testsuite/system-out");
+
+            Assert.IsTrue(node.Value.Contains("{2010CAE3-7BC0-4841-A5A3-7D5F947BB9FB}"));
+            Assert.IsTrue(node.Value.Contains("{998AC9EC-7429-42CD-AD55-72037E7AF3D8}"));
+            Assert.IsTrue(node.Value.Contains("{EEEE1DA6-6296-4486-BDA5-A50A19672F0F}"));
+            Assert.IsTrue(node.Value.Contains("{C33FF4B5-75E1-4882-B968-DF9608BFE7C2}"));
         }
 
         [TestMethod]

@@ -86,7 +86,7 @@ This option alters the testcase name attribute. By default, this contains only t
 
 #### FailureBodyFormat
 
-When set to default, the body will contain only the exception which is captured by vstest. Verbose will prepend the body with 'Expected X, Actual Y' similar to how it is displayed in the standard test output. 'Expected X, Actual Y' are normally only contained in the failure message. See [here](/docs/gitlab-recommendation.md) for an example of why this might be useful.
+When set to default, the body will contain only the exception which is captured by vstest. Verbose will prepend the body with 'Expected X, Actual Y' similar to how it is displayed in the standard test output. 'Expected X, Actual Y' are normally only contained in the failure message. Additionally, Verbose will include standard output from the test in the failure message. See [here](/docs/gitlab-recommendation.md) for an example of why this might be useful.
 
 ##### Allowed Values
 
