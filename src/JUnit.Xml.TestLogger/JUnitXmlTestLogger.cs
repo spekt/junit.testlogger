@@ -305,10 +305,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             {
                 this.stdOut.AppendLine();
                 this.stdOut.AppendLine(result.TestCase.FullyQualifiedName);
-                this.stdOut.AppendLine(
-                    string.Join(
-                        Environment.NewLine,
-                        e.Result.Messages.Select(x => x.Text)));
+                this.stdOut.AppendLine(Indent(result.Messages));
             }
 
             var parsedName = TestCaseNameParser.Parse(result.TestCase.FullyQualifiedName);
@@ -428,6 +425,20 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             };
         }
 
+        /// <summary>
+        /// Produces a consistently indented output, taking into account that incoming messages
+        /// often have new lines within a message.
+        /// </summary>
+        private static string Indent(IReadOnlyCollection<TestResultMessage> messages)
+        {
+            var indent = "   ";
+            return
+                indent +
+                string.Join(
+                    Environment.NewLine + indent,
+                    messages.Select(x => x.Text.Replace(Environment.NewLine, Environment.NewLine + indent)));
+        }
+
         private void InitializeImpl(TestLoggerEvents events, string outputPath)
         {
             events.TestRunMessage += this.TestMessageHandler;
@@ -467,7 +478,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                 "testsuite",
                 new XElement("properties"),
                 testCaseElements,
-                new XElement("system-out", this.stdOut.ToString().Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine)),
+                new XElement("system-out", this.stdOut.ToString()),
                 new XElement("system-err", this.stdErr.ToString()));
 
             element.SetAttributeValue("name", Path.GetFileName(results.First().AssemblyPath));
@@ -531,10 +542,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                 {
                     failureBodySB.AppendLine("Standard Output:");
 
-                    failureBodySB.AppendLine(
-                        string.Join(
-                            Environment.NewLine,
-                            result.Messages.Select(x => x.Text)));
+                    failureBodySB.AppendLine(Indent(result.Messages));
                 }
 
                 var failureElement = new XElement("failure", failureBodySB.ToString().Trim());
