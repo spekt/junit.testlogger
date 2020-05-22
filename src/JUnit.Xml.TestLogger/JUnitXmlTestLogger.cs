@@ -31,7 +31,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
         // Dicionary keys for command line arguments.
         public const string LogFilePathKey = "LogFilePath";
-
         public const string LogFileNameKey = "LogFileName";
         public const string ResultDirectoryKey = "TestRunDirectory";
         public const string MethodFormatKey = "MethodFormat";
@@ -43,7 +42,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
         // Tokens to allow user to manipulate output file or directory names.
         private const string AssemblyToken = "{assembly}";
-
         private const string FrameworkToken = "{framework}";
 
         private readonly object resultsGuard = new object();
