@@ -21,6 +21,9 @@ namespace JUnit.Xml.TestLogger.NetFull.Tests
         {
             Console.WriteLine("{EEEE1DA6-6296-4486-BDA5-A50A19672F0F}");
             Console.WriteLine("{C33FF4B5-75E1-4882-B968-DF9608BFE7C2}");
+            Console.Error.WriteLine("{D46DFA10-EEDD-49E5-804D-FE43051331A7}");
+            Console.Error.WriteLine("{33F5FD22-6F40-499D-98E4-481D87FAEAA1}");
+         
             Assert.False(true);
         }
 

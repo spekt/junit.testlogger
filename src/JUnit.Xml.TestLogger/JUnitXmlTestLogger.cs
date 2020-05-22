@@ -1,5 +1,5 @@
-﻿// Copyright (c) Spekt Contributors. All rights reserved. Licensed under the MIT license. See
-// LICENSE file in the project root for full license information.
+﻿// Copyright (c) Spekt Contributors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 {
@@ -431,12 +431,19 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         /// </summary>
         private static string Indent(IReadOnlyCollection<TestResultMessage> messages)
         {
-            var indent = "   ";
+            var indent = "    ";
+
+            // Splitting on any line feed or carrage return because a message may include new lines
+            // that are inconsistent with the Environment.NewLine. We then remove all blank lines so
+            // it shouldn't cause an issue that this generates extra line breaks.
             return
                 indent +
                 string.Join(
-                    Environment.NewLine + indent,
-                    messages.Select(x => x.Text.Replace(Environment.NewLine, Environment.NewLine + indent)));
+                    $"{Environment.NewLine}{indent}",
+                    messages.SelectMany(m =>
+                        m.Text.Split(new string[] { "\r", "\n" }, StringSplitOptions.None)
+                              .Where(x => !string.IsNullOrWhiteSpace(x))
+                              .Select(x => x.Trim())));
         }
 
         private void InitializeImpl(TestLoggerEvents events, string outputPath)
