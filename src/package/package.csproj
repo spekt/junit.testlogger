@@ -35,8 +35,6 @@
     <NuspecProperties>version=$(Version)</NuspecProperties>
     <IncludeContentInPack>false</IncludeContentInPack>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <PackageIcon>spekt-logo.png</PackageIcon>
-    <PackageIconUrl />
   </PropertyGroup>
 
   <ItemGroup>
@@ -54,9 +52,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="assets\spekt-logo.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
+    <None Update="packageIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
