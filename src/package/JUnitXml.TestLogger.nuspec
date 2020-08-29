@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0"?>
 <package>
-  <metadata>
+  <metadata minClientVersion="2.12">
     <id>JunitXml.TestLogger</id>
     <version>$version$</version>
     <title>JunitXml.TestLogger</title>
-    <authors>Siphonophora!,codito,faizan2304,smadala,lahma</authors>
+    <authors>Siphonophora,codito,faizan2304,smadala,lahma</authors>
     <owners>Siphonophora,codito,faizan2304,smadala</owners>
     <projectUrl>https://github.com/spekt/junit.testlogger</projectUrl>
     <description>Xml logger for JUnit v3 compliant xml report when test is running with "dotnet test" or "dotnet vstest".</description>
-    <license type="expression">MIT</license>
     <icon>packageIcon.png</icon>
+    <license type="expression">MIT</license>
   </metadata>
   <files>
     <file src="Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger.dll" target="build\_common\" />
