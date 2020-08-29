@@ -9,7 +9,7 @@
     <projectUrl>https://github.com/spekt/junit.testlogger</projectUrl>
     <description>Xml logger for JUnit v3 compliant xml report when test is running with "dotnet test" or "dotnet vstest".</description>
     <license type="expression">MIT</license>
-    <icon>packageIcon.png</icon>
+    <icon>images\packageIcon.png</icon>
   </metadata>
   <files>
     <file src="Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger.dll" target="build\_common\" />
@@ -20,5 +20,7 @@
 
     <!-- Desktop -->
     <file src="JunitXml.TestLogger.props" target="build\net45\" />
+
+    <file src="packageIcon.png" target="images\" />
   </files>
 </package>

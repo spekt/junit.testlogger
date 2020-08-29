@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <SourceRoot Condition="$(SourceRoot) == ''">..\..\</SourceRoot>
+    <PackageIcon>packageIcon.png</PackageIcon>
   </PropertyGroup>
   <Import Project="$(SourceRoot)scripts/settings.targets" />
 
