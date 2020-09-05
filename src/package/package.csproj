@@ -29,7 +29,7 @@
     <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
 
     <!-- Disable warning that there are no source files. It is intentional. -->
-    <NoWarn>$(NoWarn);2008</NoWarn>
+    <NoWarn>$(NoWarn);2008;NU5127</NoWarn>
 
     <!-- Nuget pack configuration -->
     <NuspecFile>bin\$(Configuration)\$(TargetFramework)\JUnitXml.TestLogger.nuspec</NuspecFile>
