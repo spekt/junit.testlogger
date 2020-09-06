@@ -1,7 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <SourceRoot Condition="$(SourceRoot) == ''">..\..\</SourceRoot>
+    <PackageIcon>packageIcon.png</PackageIcon>
   </PropertyGroup>
   <Import Project="$(SourceRoot)scripts/settings.targets" />
 
@@ -28,7 +29,7 @@
     <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
 
     <!-- Disable warning that there are no source files. It is intentional. -->
-    <NoWarn>$(NoWarn);2008</NoWarn>
+    <NoWarn>$(NoWarn);2008;NU5127</NoWarn>
 
     <!-- Nuget pack configuration -->
     <NuspecFile>bin\$(Configuration)\$(TargetFramework)\JUnitXml.TestLogger.nuspec</NuspecFile>
@@ -49,6 +50,12 @@
     <Content Include="JUnitXml.TestLogger.nuspec">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="packageIcon.png" Pack="true" PackagePath="">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <!--<Target Name="AfterBuild">-->

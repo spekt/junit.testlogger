@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0"?>
-<package >
+<package>
   <metadata>
     <id>JunitXml.TestLogger</id>
     <version>$version$</version>
@@ -7,7 +7,8 @@
     <authors>Siphonophora,codito,faizan2304,smadala,lahma</authors>
     <owners>Siphonophora,codito,faizan2304,smadala</owners>
     <projectUrl>https://github.com/spekt/junit.testlogger</projectUrl>
-    <description>Xml logger for JUnit v3 compliant xml report when test is running with "dotnet test" or "dotnet vstest".</description>
+    <description>Xml logger for JUnit v5 compliant xml report when test is running with "dotnet test" or "dotnet vstest".</description>
+    <icon>packageIcon.png</icon>
     <license type="expression">MIT</license>
   </metadata>
   <files>
@@ -19,5 +20,7 @@
 
     <!-- Desktop -->
     <file src="JunitXml.TestLogger.props" target="build\net45\" />
+
+    <file src="packageIcon.png" target="\" />
   </files>
 </package>

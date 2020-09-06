@@ -5,9 +5,6 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 {
     using System;
     using System.IO;
-    using System.Linq;
-    using System.Xml.Linq;
-    using System.Xml.XPath;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     /// <summary>
@@ -32,13 +29,15 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
                         "assets",
                         "JUnit.Xml.TestLogger.NetCore.Tests"));
             DotnetTestFixture.TestAssemblyName = "JUnit.Xml.TestLogger.NetCore.Tests.dll";
-            DotnetTestFixture.Execute("test-results.xml", "./artifacts");
+            var testResultsPath = Path.Combine(DotnetTestFixture.RootDirectory, "artifacts");
+            DotnetTestFixture.Execute("test-results.xml", testResultsPath);
         }
 
         [TestMethod]
         public void TestRunWithResultDirectoryAndFileNameShouldCreateResultsFile()
         {
-            Assert.IsTrue(File.Exists(Path.Combine(DotnetTestFixture.RootDirectory, "artifacts", "test-results.xml")));
+            var expectedResultsPath = Path.Combine(DotnetTestFixture.RootDirectory, "artifacts", "test-results.xml");
+            Assert.IsTrue(File.Exists(expectedResultsPath), $"Results file at '{expectedResultsPath}' not found.");
         }
     }
 }
