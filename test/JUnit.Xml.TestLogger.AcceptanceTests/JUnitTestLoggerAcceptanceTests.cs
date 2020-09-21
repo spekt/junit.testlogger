@@ -55,9 +55,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
             Assert.IsNotNull(node);
             Assert.AreEqual("JUnit.Xml.TestLogger.NetCore.Tests.dll", node.Attribute(XName.Get("name")).Value);
-
-            // hostname may change with every test run, can't predict an exact value, but it should not be empty
-            Assert.IsFalse(string.IsNullOrEmpty(node.Attribute(XName.Get("hostname")).Value));
+            Assert.AreEqual(Environment.MachineName, node.Attribute(XName.Get("hostname")).Value);
 
             Assert.AreEqual("52", node.Attribute(XName.Get("tests")).Value);
             Assert.AreEqual("14", node.Attribute(XName.Get("failures")).Value);
