@@ -96,6 +96,26 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
         }
 
         [TestMethod]
+        public void TestResultFileShouldContainStandardOut()
+        {
+            var node = this.resultsXml.XPathSelectElement("/testsuites/testsuite/system-out");
+
+            Assert.IsTrue(node.Value.Contains("{2010CAE3-7BC0-4841-A5A3-7D5F947BB9FB}"));
+            Assert.IsTrue(node.Value.Contains("{998AC9EC-7429-42CD-AD55-72037E7AF3D8}"));
+            Assert.IsTrue(node.Value.Contains("{EEEE1DA6-6296-4486-BDA5-A50A19672F0F}"));
+            Assert.IsTrue(node.Value.Contains("{C33FF4B5-75E1-4882-B968-DF9608BFE7C2}"));
+        }
+
+        [TestMethod]
+        public void TestResultFileShouldContainErrordOut()
+        {
+            var node = this.resultsXml.XPathSelectElement("/testsuites/testsuite/system-err");
+
+            Assert.IsTrue(node.Value.Contains("{D46DFA10-EEDD-49E5-804D-FE43051331A7}"));
+            Assert.IsTrue(node.Value.Contains("{33F5FD22-6F40-499D-98E4-481D87FAEAA1}"));
+        }
+
+        [TestMethod]
         public void LoggedXmlValidatesAgainstXsdSchema()
         {
             var validator = new JunitXmlValidator();

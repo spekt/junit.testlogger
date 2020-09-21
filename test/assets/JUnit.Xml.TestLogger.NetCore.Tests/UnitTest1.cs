@@ -11,12 +11,19 @@ namespace JUnit.Xml.TestLogger.NetFull.Tests
         [Description("Passing test description")]
         public async Task PassTest11()
         {
+            Console.WriteLine("{2010CAE3-7BC0-4841-A5A3-7D5F947BB9FB}");
+            Console.WriteLine("{998AC9EC-7429-42CD-AD55-72037E7AF3D8}");
             await Task.Delay(TimeSpan.FromMilliseconds(400));
         }
 
         [Test]
         public void FailTest11()
         {
+            Console.WriteLine("{EEEE1DA6-6296-4486-BDA5-A50A19672F0F}");
+            Console.WriteLine("{C33FF4B5-75E1-4882-B968-DF9608BFE7C2}");
+            Console.Error.WriteLine("{D46DFA10-EEDD-49E5-804D-FE43051331A7}");
+            Console.Error.WriteLine("{33F5FD22-6F40-499D-98E4-481D87FAEAA1}");
+         
             Assert.False(true);
         }
 
