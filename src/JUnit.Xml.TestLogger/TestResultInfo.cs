@@ -29,6 +29,8 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
         public string AssemblyPath => this.result.TestCase.Source;
 
+        public string HostName => this.result.ComputerName;
+
         public string Namespace { get; private set; }
 
         public string Type { get; private set; }

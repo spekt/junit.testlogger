@@ -494,7 +494,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             element.SetAttributeValue("errors", 0); // looks like this isn't supported by .net?
             element.SetAttributeValue("time", results.Sum(x => x.Duration.TotalSeconds));
             element.SetAttributeValue("timestamp", this.utcStartTime.ToString("s"));
-            element.SetAttributeValue("hostname", results.First().TestCase.ExecutorUri);
+            element.SetAttributeValue("hostname", results.First().HostName);
             element.SetAttributeValue("id", 0); // we never output multiple, so this is always zero.
             element.SetAttributeValue("package", Path.GetFileName(results.First().AssemblyPath));
 

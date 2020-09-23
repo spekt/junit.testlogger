@@ -55,7 +55,8 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
             Assert.IsNotNull(node);
             Assert.AreEqual("JUnit.Xml.TestLogger.NetCore.Tests.dll", node.Attribute(XName.Get("name")).Value);
-            Assert.AreEqual("executor://nunit3testexecutor/", node.Attribute(XName.Get("hostname")).Value);
+            Assert.AreEqual(Environment.MachineName, node.Attribute(XName.Get("hostname")).Value);
+
             Assert.AreEqual("52", node.Attribute(XName.Get("tests")).Value);
             Assert.AreEqual("14", node.Attribute(XName.Get("failures")).Value);
             Assert.AreEqual("6", node.Attribute(XName.Get("skipped")).Value);
