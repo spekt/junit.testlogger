@@ -134,11 +134,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                             parenthesisCount++;
                         }
 
-                        if (thisChar == '\\')
-                        {
-                            throw new Exception("Found invalid characters");
-                        }
-
                         if (thisChar == '(')
                         {
                             // If we found the beginning of the parenthesis block, we are back in default state
