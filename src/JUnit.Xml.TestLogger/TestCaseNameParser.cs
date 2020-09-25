@@ -123,7 +123,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                     }
                     else if (state == NameParseState.Parenthesis)
                     {
-                        if (thisChar == ')' || thisChar == '\\')
+                        if (thisChar == ')')
                         {
                             throw new Exception("Found invalid characters");
                         }

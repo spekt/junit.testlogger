@@ -27,6 +27,9 @@ namespace JUnit.Xml.TestLogger.UnitTests
         // Tests with longer type and method names
         [DataRow("z.y.x.ape.bar(\"ar.g\",\"\\\"\")", "z.y.x", "ape", "bar(\"ar.g\",\"\\\"\")")]
         [DataRow("z.y.x.ape.bar(\"ar.g\",\")(\")", "z.y.x", "ape", "bar(\"ar.g\",\")(\")")]
+
+        // See nunit.testlogger #66.
+        [DataRow("z.y.x.ape.bar(a\\b)", "z.y.x", "ape", "bar(a\\b)")]
         public void Parse_ParsesAllParsableInputs_WithoutConsoleOutput(string testCaseName, string expectedNamespace, string expectedType, string expectedMethod)
         {
             var expected = new Tuple<string, string>(expectedType, expectedMethod);
