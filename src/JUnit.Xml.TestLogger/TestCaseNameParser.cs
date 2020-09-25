@@ -56,6 +56,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
             var step = NameParseStep.FindMethod;
             var state = NameParseState.Default;
+            var parenthesisCount = 0;
 
             var output = new List<char>();
 
@@ -71,13 +72,18 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                     }
                     else if (state == NameParseState.Default)
                     {
-                        if (thisChar == '(' || thisChar == '"' || thisChar == '\\')
+                        if (thisChar == '(')
+                        {
+                            parenthesisCount--;
+                        }
+
+                        if (thisChar == '"' || thisChar == '\\')
                         {
                             throw new Exception("Found invalid characters");
                         }
                         else if (thisChar == ')')
                         {
-                            if (output.Count > 0)
+                            if ((output.Count > 0) && (parenthesisCount == 0))
                             {
                                 throw new Exception("The closing parenthesis we detected wouldn't be the last character in the output string. This isn't acceptable because we aren't in a string");
                             }
@@ -125,6 +131,11 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
                     {
                         if (thisChar == ')')
                         {
+                            parenthesisCount++;
+                        }
+
+                        if (thisChar == '\\')
+                        {
                             throw new Exception("Found invalid characters");
                         }
 
@@ -155,6 +166,11 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
 
                         output.Insert(0, thisChar);
                     }
+                }
+
+                if (parenthesisCount != 0)
+                {
+                    throw new Exception($"Unbalanced count of parentheses found ({parenthesisCount})");
                 }
 
                 // We are done. If we are finding type, set that variable.
