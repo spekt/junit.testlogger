@@ -38,8 +38,6 @@ namespace JUnit.Xml.TestLogger.UnitTests
         [DataRow("z.a.b((0,(0,1)),(0,1))", "z", "a", "b((0,(0,1)),(0,1))")]
         public void Parse_ParsesAllParsableInputs_WithoutConsoleOutput(string testCaseName, string expectedNamespace, string expectedType, string expectedMethod)
         {
-            var expected = new Tuple<string, string>(expectedType, expectedMethod);
-
             using (var sw = new StringWriter())
             {
                 Console.SetOut(sw);
