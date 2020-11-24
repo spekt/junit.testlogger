@@ -30,6 +30,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
         public const string FriendlyName = "junit";
 
         // Dicionary keys for command line arguments.
+        public const string TargetFrameworkKey = "TargetFramework";
         public const string LogFilePathKey = "LogFilePath";
         public const string LogFileNameKey = "LogFileName";
         public const string ResultDirectoryKey = "TestRunDirectory";
@@ -178,7 +179,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger
             }
 
             // Assist users with message when they entered invalid CLI options
-            var knownKeys = new List<string>() { ResultDirectoryKey, LogFilePathKey, LogFileNameKey, MethodFormatKey, FailureBodyFormatKey };
+            var knownKeys = new List<string>() { TargetFrameworkKey, ResultDirectoryKey, LogFilePathKey, LogFileNameKey, MethodFormatKey, FailureBodyFormatKey };
             parameters.Where(x => knownKeys.Contains(x.Key) == false).ToList()
                 .ForEach(x => Console.WriteLine($"JunitXML Logger: The provided configuration item '{x.Key}' is not valid and will be ignored. Note, names are case sensitive."));
 
