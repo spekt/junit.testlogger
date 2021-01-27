@@ -3,7 +3,8 @@
 JUnit xml report extension for [Visual Studio Test Platform](https://github.com/microsoft/vstest).
 
 [![Build Status](https://travis-ci.com/spekt/junit.testlogger.svg?branch=master)](https://travis-ci.com/spekt/junit.testlogger)
-[![Build status](https://ci.appveyor.com/api/projects/status/gsiaqo5g4gfk76kq?svg=true)](https://ci.appveyor.com/project/spekt/junit-testlogger)
+[![Build Status](https://ci.appveyor.com/api/projects/status/gsiaqo5g4gfk76kq?svg=true)](https://ci.appveyor.com/project/spekt/junit-testlogger)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/JunitXml.TestLogger)](https://www.nuget.org/packages/JunitXml.TestLogger/)
 
 ## Packages
 
