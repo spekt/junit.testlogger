@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <SourceRoot Condition="$(SourceRoot) == ''">$(MSBuildThisFileDirectory)../../</SourceRoot>
-    <SourcePrefix>2.1.0</SourcePrefix>
+    <SourcePrefix>3.0.0</SourcePrefix>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Versioning is defined from the build script. Use a default dev build if it's not defined.

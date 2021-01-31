@@ -11,5 +11,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Visible>False</Visible>
     </Content>
+    <Content Include="$(MSBuildThisFileDirectory)..\_common\Spekt.TestLogger.dll">
+      <Link>Spekt.TestLogger.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Visible>False</Visible>
+    </Content>    
   </ItemGroup>
 </Project>
