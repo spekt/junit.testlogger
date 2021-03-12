@@ -45,6 +45,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Spekt.TestLogger" Version="$(TestLoggerVersion)" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <Content Include="JUnitXml.TestLogger.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
