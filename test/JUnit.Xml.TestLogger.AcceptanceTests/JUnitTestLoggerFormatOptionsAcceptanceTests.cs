@@ -8,7 +8,6 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
     using System.Linq;
     using System.Xml.Linq;
     using System.Xml.XPath;
-    using Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Spekt.TestLogger.Core;
 

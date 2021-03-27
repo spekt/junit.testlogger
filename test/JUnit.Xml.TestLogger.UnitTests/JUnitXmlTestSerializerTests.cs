@@ -9,13 +9,12 @@ namespace JUnit.Xml.TestLogger.UnitTests
     using System.Linq;
     using System.Xml.Linq;
     using System.Xml.XPath;
-    using Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger;
+    using Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-    using TestSuite = Microsoft.VisualStudio.TestPlatform.Extension.JUnit.Xml.TestLogger.JUnitXmlTestLogger.TestSuite;
+    using TestSuite = Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger.JunitXmlSerializer.TestSuite;
 
     [TestClass]
-    public class JUnitXmlTestLoggerTests
+    public class JUnitXmlTestSerializerTests
     {
         private const string DummyTestResultsDirectory = "/tmp/testresults";
 
@@ -31,7 +30,7 @@ namespace JUnit.Xml.TestLogger.UnitTests
             var suite1 = CreateTestSuite("a.b");
             var suite2 = CreateTestSuite("c.d");
 
-            var result = JUnitXmlTestLogger.GroupTestSuites(new[] { suite1, suite2 }).ToArray();
+            var result = JunitXmlSerializer.GroupTestSuites(new[] { suite1, suite2 }).ToArray();
 
             Assert.AreEqual(2, result.Length);
             Assert.AreEqual("a", result[0].Name);
@@ -45,7 +44,7 @@ namespace JUnit.Xml.TestLogger.UnitTests
             var expectedXmlForA = @"<test-suite type=""TestSuite"" name=""a"" fullname=""a"" total=""10"" passed=""2"" failed=""2"" inconclusive=""2"" skipped=""2"" result=""Failed"" duration=""0""><test-suite type=""TestSuite"" name=""b"" fullname=""a.b"" total=""10"" passed=""2"" failed=""2"" inconclusive=""2"" skipped=""2"" result=""Failed"" duration=""0""><test-suite /><test-suite /></test-suite></test-suite>";
             var expectedXmlForC = @"<test-suite type=""TestSuite"" name=""c"" fullname=""c"" total=""5"" passed=""1"" failed=""1"" inconclusive=""1"" skipped=""1"" result=""Failed"" duration=""0""><test-suite /></test-suite>";
 
-            var result = JUnitXmlTestLogger.GroupTestSuites(suites).ToArray();
+            var result = JunitXmlSerializer.GroupTestSuites(suites).ToArray();
 
             Assert.AreEqual(2, result.Length);
             Assert.AreEqual("c", result[0].Name);
