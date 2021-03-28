@@ -206,7 +206,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
             {
                 if (TestResultMessage.StandardErrorCategory.Equals(m.Category, StringComparison.OrdinalIgnoreCase))
                 {
-                    stdOut.AppendLine(m.Text);
+                    stdErr.AppendLine(m.Text);
                 }
             }
 
