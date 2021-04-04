@@ -90,10 +90,11 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
         public string Serialize(
             LoggerConfiguration loggerConfiguration,
             TestRunConfiguration runConfiguration,
-            List<TestResultInfo> results)
+            List<TestResultInfo> results,
+            List<TestMessageInfo> messages)
         {
             this.Configure(loggerConfiguration);
-            var doc = new XDocument(this.CreateTestSuitesElement(results, runConfiguration));
+            var doc = new XDocument(this.CreateTestSuitesElement(results, runConfiguration, messages));
             return doc.ToString();
         }
 
@@ -177,18 +178,20 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
 
         private XElement CreateTestSuitesElement(
             List<TestResultInfo> results,
-            TestRunConfiguration runConfiguration)
+            TestRunConfiguration runConfiguration,
+            List<TestMessageInfo> messages)
         {
             var assemblies = results.Select(x => x.AssemblyPath).Distinct().ToList();
             var testsuiteElements = assemblies
                 .Select(a => this.CreateTestSuiteElement(
                     results.Where(x => x.AssemblyPath == a).ToList(),
-                    runConfiguration));
+                    runConfiguration,
+                    messages));
 
             return new XElement("testsuites", testsuiteElements);
         }
 
-        private XElement CreateTestSuiteElement(List<TestResultInfo> results, TestRunConfiguration runConfiguration)
+        private XElement CreateTestSuiteElement(List<TestResultInfo> results, TestRunConfiguration runConfiguration, List<TestMessageInfo> messages)
         {
             var testCaseElements = results.Select(a => this.CreateTestCaseElement(a));
 
@@ -201,13 +204,22 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
                 }
             }
 
-            StringBuilder stdErr = new StringBuilder();
-            foreach (var m in results.SelectMany(x => x.Messages))
+            var frameworkInfo = messages.Where(x => x.Level == TestMessageLevel.Informational);
+            if (frameworkInfo.Any())
             {
-                if (TestResultMessage.StandardErrorCategory.Equals(m.Category, StringComparison.OrdinalIgnoreCase))
+                stdOut.AppendLine(string.Empty);
+                stdOut.AppendLine("Test Framework Informational Messages:");
+
+                foreach (var m in frameworkInfo)
                 {
-                    stdErr.AppendLine(m.Text);
+                    stdOut.AppendLine(m.Message);
                 }
+            }
+
+            StringBuilder stdErr = new StringBuilder();
+            foreach (var m in messages.Where(x => x.Level != TestMessageLevel.Informational))
+            {
+                stdErr.AppendLine($"{m.Level} - {m.Message}");
             }
 
             // Adding required properties, system-out, and system-err elements in the correct
