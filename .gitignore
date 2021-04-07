@@ -104,3 +104,4 @@ nugetPackage
 
 # Test results
 test/**/*test-results.xml
+CodeMaid.config

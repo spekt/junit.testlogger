@@ -27,7 +27,8 @@
     <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
     <CopyBuildOutputToPublishDirectory>false</CopyBuildOutputToPublishDirectory>
     <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
-
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    
     <!-- Disable warning that there are no source files. It is intentional. -->
     <NoWarn>$(NoWarn);2008;NU5127</NoWarn>
 
@@ -43,6 +44,10 @@
     <ProjectReference Include="..\JUnit.Xml.TestLogger.TestAdapter\JUnit.Xml.TestLogger.TestAdapter.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Spekt.TestLogger" Version="$(TestLoggerVersion)" />
+  </ItemGroup>
+  
   <ItemGroup>
     <Content Include="JUnitXml.TestLogger.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

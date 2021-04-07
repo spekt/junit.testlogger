@@ -14,20 +14,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\JUnit.Xml.TestLogger\JUnitXmlTestLogger.cs">
-      <Link>JUnitXmlTestLogger.cs</Link>
-    </Compile>
-    <Compile Include="..\JUnit.Xml.TestLogger\StringExtensions.cs">
-      <Link>StringExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\JUnit.Xml.TestLogger\TestCaseNameParser.cs" Link="TestCaseNameParser.cs" />
-    <Compile Include="..\JUnit.Xml.TestLogger\TestResultInfo.cs">
-      <Link>TestResultInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\JUnit.Xml.TestLogger\JunitXmlSerializer.cs" Link="JunitXmlSerializer.cs" />
+    <Compile Include="..\JUnit.Xml.TestLogger\JUnitXmlTestLogger.cs" Link="JUnitXmlTestLogger.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="15.5.0" />
+    <PackageReference Include="Spekt.TestLogger" Version="$(TestLoggerVersion)" />
     <PackageReference Include="System.ValueTuple" Version="4.3.0" />
   </ItemGroup>
 </Project>
