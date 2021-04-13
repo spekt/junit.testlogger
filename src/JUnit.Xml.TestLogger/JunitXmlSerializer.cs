@@ -238,7 +238,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
             element.SetAttributeValue("skipped", results.Where(x => x.Outcome == TestOutcome.Skipped).Count());
             element.SetAttributeValue("failures", results.Where(x => x.Outcome == TestOutcome.Failed).Count());
             element.SetAttributeValue("errors", 0); // looks like this isn't supported by .net?
-            element.SetAttributeValue("time", results.Sum(x => x.Duration.TotalSeconds));
+            element.SetAttributeValue("time", results.Sum(x => x.Duration.TotalSeconds).ToString(CultureInfo.InvariantCulture));
             element.SetAttributeValue("timestamp", runConfiguration.StartTime.ToString("s"));
             element.SetAttributeValue("hostname", Environment.MachineName);
             element.SetAttributeValue("id", 0); // we never output multiple, so this is always zero.
@@ -272,7 +272,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
             // seconds should be low enough it won't interfere with anyone monitoring test duration.
             testcaseElement.SetAttributeValue(
                 "time",
-                Math.Max(0.0000001f, result.Duration.TotalSeconds).ToString("0.0000000"));
+                Math.Max(0.0000001f, result.Duration.TotalSeconds).ToString("0.0000000", CultureInfo.InvariantCulture));
 
             if (result.Outcome == TestOutcome.Failed)
             {
