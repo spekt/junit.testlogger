@@ -41,17 +41,20 @@ A path for the report file can be specified as follows:
 All common options to the logger is documented [in the wiki][config-wiki]. E.g.
 token expansion for `{assembly}` or `{framework}` in result file. If you are writing multiple
 files to the same directory or testing multiple frameworks, these options can prevent
-test logs from overwriting eachother.
+test logs from over-writing eachother.
 
 [config-wiki]: https://github.com/spekt/testlogger/wiki/Logger-Configuration
 
-### Customizing Output
+### Customizing Junit XML Contents
 
-There are several options to customize the output file name, location, and contents.
+There are several options to customize the output xml contents. These options are provided to
+allow cutomization of how the test results appear in different CI/CD systems.
 
 Platform Specific Recommendations:
 
 - [GitLab CI/CD Recomendation](/docs/gitlab-recommendation.md)
+- [Jenkins Recomendation](/docs/jenkins-recommendation.md) 
+- [CircleCI Recomendation](/docs/circleci-recommendation.md)
 
 After the logger name, command line arguments are provided as key/value pairs with the following general format. **Note** the quotes are required and key names are case sensitive. In case of issues, review the command line output for error messages.
 
@@ -59,13 +62,11 @@ After the logger name, command line arguments are provided as key/value pairs wi
 > dotnet test --test-adapter-path:. --logger:"junit;key1=value1;key2=value2"
 ```
 
-#### Log File Name and Path
-
-You can control 
-
 #### MethodFormat
 
-This option alters the testcase name attribute. By default, this contains only the method. Class, will add the class to the name. Full, will add the assembly/namespace/class to the method. See [here](/docs/gitlab-recommendation.md) for an example of why this might be useful.
+This option alters the testcase name attribute. By default, this contains only the method. Class, will add the class to the name. Full, will add the assembly/namespace/class to the method. 
+
+We recommend this option for [GitLab](/docs/gitlab-recommendation.md) users.
 
 ##### Allowed Values
 
@@ -75,12 +76,25 @@ This option alters the testcase name attribute. By default, this contains only t
 
 #### FailureBodyFormat
 
-When set to default, the body will contain only the exception which is captured by vstest. Verbose will prepend the body with 'Expected X, Actual Y' similar to how it is displayed in the standard test output. 'Expected X, Actual Y' are normally only contained in the failure message. Additionally, Verbose will include standard output from the test in the failure message. See [here](/docs/gitlab-recommendation.md) for an example of why this might be useful.
+When set to default, the body will contain only the exception which is captured by vstest. Verbose will prepend the body with 'Expected X, Actual Y' similar to how it is displayed in the standard test output. 'Expected X, Actual Y' are normally only contained in the failure message. Additionally, Verbose will include standard output from the test in the failure message. 
+
+We recommend this option for [GitLab](/docs/gitlab-recommendation.md) users.
 
 ##### Allowed Values
 
 - FailureBodyFormat=Default
 - FailureBodyFormat=Verbose
+
+#### TestSuiteFormat
+
+When set to default, the `TestSute Name` will contain the assembly name (test.dll). The AddFramework option will apend test framework to the assembly name (e.g. test.dll.NetCoreApp31).
+
+We recommend this option for [Jenkins](/docs/jenkins-recommendation.md) users when multi-targeting.
+
+##### Allowed Values
+
+- TestSuiteFormat=Default
+- TestSuiteFormat=AddFramework
 
 ## License
 
