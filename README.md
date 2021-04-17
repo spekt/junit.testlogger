@@ -56,7 +56,7 @@ Platform Specific Recommendations:
 - [Jenkins Recomendation](/docs/jenkins-recommendation.md) 
 - [CircleCI Recomendation](/docs/circleci-recommendation.md)
 
-After the logger name, command line arguments are provided as key/value pairs with the following general format. **Note** the quotes are required and key names are case sensitive. In case of issues, review the command line output for error messages.
+After the logger name, command line arguments are provided as key/value pairs with the following general format. **Note** the quotes are required and key names are case sensitive.
 
 ```
 > dotnet test --test-adapter-path:. --logger:"junit;key1=value1;key2=value2"
