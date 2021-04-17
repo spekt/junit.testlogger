@@ -167,5 +167,31 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
                 Assert.AreEqual(expectedFullName, testcase.Attribute("name").Value);
             }
         }
+
+        [TestMethod]
+        public void TestSuiteFormat_Default_ShouldEqualAssembly()
+        {
+            DotnetTestFixture.Execute("test-suite-default.xml;TestSuiteFormat=Default");
+            string resultsFile = Path.Combine(DotnetTestFixture.RootDirectory, "test-suite-default.xml");
+            XDocument resultsXml = XDocument.Load(resultsFile);
+
+            var testsuite = resultsXml.XPathSelectElements("/testsuites/testsuite").Single();
+            var suiteName = testsuite.Attribute("name").Value;
+
+            Assert.AreEqual("JUnit.Xml.TestLogger.NetCore.Tests.dll", suiteName);
+        }
+
+        [TestMethod]
+        public void TestSuiteFormat_AddFramework_ShouldEqualAssembly()
+        {
+            DotnetTestFixture.Execute("test-suite-addframework.xml;TestSuiteFormat=AddFramework");
+            string resultsFile = Path.Combine(DotnetTestFixture.RootDirectory, "test-suite-addframework.xml");
+            XDocument resultsXml = XDocument.Load(resultsFile);
+
+            var testsuite = resultsXml.XPathSelectElements("/testsuites/testsuite").Single();
+            var suiteName = testsuite.Attribute("name").Value;
+
+            Assert.AreEqual("JUnit.Xml.TestLogger.NetCore.Tests.dll.NETCoreApp31", suiteName);
+        }
     }
 }
