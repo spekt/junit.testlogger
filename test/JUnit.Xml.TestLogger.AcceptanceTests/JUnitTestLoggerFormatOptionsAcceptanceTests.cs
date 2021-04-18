@@ -43,6 +43,8 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
                 Assert.IsFalse(body.StartsWith(message));
             }
+
+            Assert.IsTrue(new JunitXmlValidator().IsValid(resultsXml));
         }
 
         [TestMethod]
@@ -59,6 +61,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
             Assert.AreEqual(0, failures.Count(x => x.Value.Contains("{EEEE1DA6-6296-4486-BDA5-A50A19672F0F}")));
             Assert.AreEqual(0, failures.Count(x => x.Value.Contains("{C33FF4B5-75E1-4882-B968-DF9608BFE7C2}")));
+            Assert.IsTrue(new JunitXmlValidator().IsValid(resultsXml));
         }
 
         [TestMethod]
@@ -82,6 +85,8 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
                 Assert.IsTrue(body.Trim().StartsWith(message.Trim()));
             }
+
+            Assert.IsTrue(new JunitXmlValidator().IsValid(resultsXml));
         }
 
         [TestMethod]
@@ -98,6 +103,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
             Assert.AreEqual(1, failures.Count(x => x.Value.Contains("{EEEE1DA6-6296-4486-BDA5-A50A19672F0F}")));
             Assert.AreEqual(1, failures.Count(x => x.Value.Contains("{C33FF4B5-75E1-4882-B968-DF9608BFE7C2}")));
+            Assert.IsTrue(new JunitXmlValidator().IsValid(resultsXml));
         }
 
         [TestMethod]
@@ -119,6 +125,8 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
                 // A method name only will not be parsable into two pieces
                 Assert.AreEqual(parsedName.TypeName, TestCaseNameParser.TestCaseParserUnknownType);
             }
+
+            Assert.IsTrue(new JunitXmlValidator().IsValid(resultsXml));
         }
 
         [TestMethod]
@@ -141,6 +149,8 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
                 // consider that to be a passing result.
                 Assert.AreNotEqual(parsedName.TypeName, TestCaseNameParser.TestCaseParserUnknownType);
             }
+
+            Assert.IsTrue(new JunitXmlValidator().IsValid(resultsXml));
         }
 
         [TestMethod]
@@ -166,6 +176,8 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
                 Assert.AreNotEqual(parsedName.TypeName, TestCaseNameParser.TestCaseParserUnknownType);
                 Assert.AreEqual(expectedFullName, testcase.Attribute("name").Value);
             }
+
+            Assert.IsTrue(new JunitXmlValidator().IsValid(resultsXml));
         }
 
         [TestMethod]
@@ -179,6 +191,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
             var suiteName = testsuite.Attribute("name").Value;
 
             Assert.AreEqual("JUnit.Xml.TestLogger.NetCore.Tests.dll", suiteName);
+            Assert.IsTrue(new JunitXmlValidator().IsValid(resultsXml));
         }
 
         [TestMethod]
@@ -192,6 +205,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
             var suiteName = testsuite.Attribute("name").Value;
 
             Assert.AreEqual("JUnit.Xml.TestLogger.NetCore.Tests.dll.NETCoreApp31", suiteName);
+            Assert.IsTrue(new JunitXmlValidator().IsValid(resultsXml));
         }
     }
 }
