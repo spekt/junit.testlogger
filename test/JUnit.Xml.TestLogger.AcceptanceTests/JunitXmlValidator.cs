@@ -50,6 +50,8 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
             return this.failures.Any() == false;
         }
 
+        public bool IsValid(XDocument doc) => this.IsValid(doc.ToString());
+
         private void XmlValidationEventHandler(object sender, ValidationEventArgs e)
         {
             this.failures.Add(e.Exception);
