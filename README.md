@@ -22,12 +22,14 @@ If you're looking for `Nunit`, `Xunit` or `appveyor` loggers, visit following re
 
 The JUnit Test Logger generates xml reports in the [Ant Junit Format](https://github.com/windyroad/JUnit-Schema), which the JUnit 5 repository refers to as the de-facto standard. While the generated xml complies with that schema, it does not contain values in every case. For example, the logger currently does not log any `properties`. Please [refer to a sample file](docs/assets/TestResults.xml) to see an example. If you find that the format is missing data required by your CI/CD system, please open an issue or PR.
 
+To use the logger, follow these steps:
+
 1. Add a reference to the [JUnit Logger](https://www.nuget.org/packages/JUnitXml.TestLogger) nuget package in test project
 2. Use the following command line in tests
 ```
 > dotnet test --logger:junit
 ```
-1. Test results are generated in the `TestResults` directory relative to the `test.csproj`
+3. Test results are generated in the `TestResults` directory relative to the `test.csproj`
 
 A path for the report file can be specified as follows:
 ```
@@ -38,7 +40,7 @@ A path for the report file can be specified as follows:
 
 **Note:** the arguments to `--logger` should be in quotes since `;` is treated as a command delimiter in shell.
 
-All common options to the logger is documented [in the wiki][config-wiki]. E.g.
+All common options to the logger are documented [in the wiki][config-wiki]. E.g.
 token expansion for `{assembly}` or `{framework}` in result file. If you are writing multiple
 files to the same directory or testing multiple frameworks, these options can prevent
 test logs from over-writing eachother.
@@ -47,8 +49,8 @@ test logs from over-writing eachother.
 
 ### Customizing Junit XML Contents
 
-There are several options to customize the output xml contents. These options are provided to
-allow cutomization of how the test results appear in different CI/CD systems.
+There are several options to customize how the junit xml is populated. These options exist to
+provide additional control over the xml file so that the logged test results can be optimized for different CI/CD systems.
 
 Platform Specific Recommendations:
 
@@ -64,7 +66,7 @@ After the logger name, command line arguments are provided as key/value pairs wi
 
 #### MethodFormat
 
-This option alters the testcase name attribute. By default, this contains only the method. Class, will add the class to the name. Full, will add the assembly/namespace/class to the method. 
+This option alters the `testcase name` attribute. By default, this contains only the method. Class, will add the class to the name. Full, will add the assembly/namespace/class to the method. 
 
 We recommend this option for [GitLab](/docs/gitlab-recommendation.md) users.
 
@@ -76,7 +78,7 @@ We recommend this option for [GitLab](/docs/gitlab-recommendation.md) users.
 
 #### FailureBodyFormat
 
-When set to default, the body will contain only the exception which is captured by vstest. Verbose will prepend the body with 'Expected X, Actual Y' similar to how it is displayed in the standard test output. 'Expected X, Actual Y' are normally only contained in the failure message. Additionally, Verbose will include standard output from the test in the failure message. 
+When set to default, the body of a `failure` element will contain only the exception which is captured by vstest. Verbose will prepend the body with 'Expected X, Actual Y' similar to how it is displayed in the standard test output. 'Expected X, Actual Y' are normally only contained in the failure message. Additionally, Verbose will include standard output from the test in the failure message. 
 
 We recommend this option for [GitLab](/docs/gitlab-recommendation.md) users.
 
@@ -87,7 +89,7 @@ We recommend this option for [GitLab](/docs/gitlab-recommendation.md) users.
 
 #### TestSuiteFormat
 
-When set to default, the `TestSute Name` will contain the assembly name (test.dll). The AddFramework option will apend test framework to the assembly name (e.g. test.dll.NetCoreApp31).
+When set to default, the `testsuite name` attribute will contain the assembly name (test.dll). The AddFramework option will apend test framework to the assembly name (e.g. test.dll.NetCoreApp31).
 
 We recommend this option for [Jenkins](/docs/jenkins-recommendation.md) users when multi-targeting.
 
