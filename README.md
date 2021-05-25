@@ -87,17 +87,6 @@ We recommend this option for [GitLab](/docs/gitlab-recommendation.md) users.
 - FailureBodyFormat=Default
 - FailureBodyFormat=Verbose
 
-#### TestSuiteFormat
-
-When set to default, the `testsuite name` attribute will contain the assembly name (test.dll). The AddFramework option will apend test framework to the assembly name (e.g. test.dll.NetCoreApp31).
-
-We recommend this option for [Jenkins](/docs/jenkins-recommendation.md) users when multi-targeting.
-
-##### Allowed Values
-
-- TestSuiteFormat=Default
-- TestSuiteFormat=AddFramework
-
 ## License
 
 MIT

@@ -19,7 +19,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
         // Dicionary keys for command line arguments.
         public const string MethodFormatKey = "MethodFormat";
         public const string FailureBodyFormatKey = "FailureBodyFormat";
-        public const string TestSuiteFormatKey = "TestSuiteFormat";
 
         private const string ResultStatusPassed = "Passed";
         private const string ResultStatusFailed = "Failed";
@@ -55,24 +54,9 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
             Verbose,
         }
 
-        public enum TestSuiteFormat
-        {
-            /// <summary>
-            /// The test suite will contain only the assembly name.
-            /// </summary>
-            Default,
-
-            /// <summary>
-            /// The test suite will contain only the assembly name followed by the framework.
-            /// </summary>
-            AddFramework,
-        }
-
         public MethodFormat MethodFormatOption { get; private set; } = MethodFormat.Default;
 
         public FailureBodyFormat FailureBodyFormatOption { get; private set; } = FailureBodyFormat.Default;
-
-        public TestSuiteFormat TestSuiteFormatOption { get; private set; } = TestSuiteFormat.Default;
 
         public static IEnumerable<TestSuite> GroupTestSuites(IEnumerable<TestSuite> suites)
         {
@@ -244,11 +228,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
                 new XElement("system-out", stdOut.ToString()),
                 new XElement("system-err", stdErr.ToString()));
 
-            var frameworkSuffix = this.TestSuiteFormatOption == TestSuiteFormat.AddFramework ?
-                '.' + runConfiguration.TargetFramework.Replace(",Version=v", string.Empty).Replace(".", string.Empty) :
-                string.Empty;
-
-            element.SetAttributeValue("name", Path.GetFileName(results.First().AssemblyPath) + frameworkSuffix);
+            element.SetAttributeValue("name", Path.GetFileName(results.First().AssemblyPath));
 
             element.SetAttributeValue("tests", results.Count);
             element.SetAttributeValue("skipped", results.Where(x => x.Outcome == TestOutcome.Skipped).Count());
@@ -368,22 +348,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
                 else
                 {
                     Console.WriteLine($"JunitXML Logger: The provided Failure Body Format '{failureFormat}' is not a recognized option. Using default");
-                }
-            }
-
-            if (loggerConfiguration.Values.TryGetValue(TestSuiteFormatKey, out string testSuiteFormat))
-            {
-                if (string.Equals(testSuiteFormat.Trim(), "AddFramework", StringComparison.OrdinalIgnoreCase))
-                {
-                    this.TestSuiteFormatOption = TestSuiteFormat.AddFramework;
-                }
-                else if (string.Equals(testSuiteFormat.Trim(), "Default", StringComparison.OrdinalIgnoreCase))
-                {
-                    this.TestSuiteFormatOption = TestSuiteFormat.Default;
-                }
-                else
-                {
-                    Console.WriteLine($"JunitXML Logger: The provided Test Suite Format '{testSuiteFormat}' is not a recognized option. Using default");
                 }
             }
         }
