@@ -19,6 +19,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
     {
         // Dicionary keys for command line arguments.
         public const string MethodFormatKey = "MethodFormat";
+
         public const string FailureBodyFormatKey = "FailureBodyFormat";
 
         private const string ResultStatusPassed = "Passed";
@@ -311,8 +312,8 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
         }
 
         /// <summary>
-        /// Performs logger specific configuration based the user's CLI flags, which
-        /// are provided through <see cref="LoggerConfiguration"/>.
+        /// Performs logger specific configuration based the user's CLI flags, which are provided
+        /// through <see cref="LoggerConfiguration"/>.
         /// </summary>
         private void Configure(LoggerConfiguration loggerConfiguration)
         {
