@@ -254,15 +254,15 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
 
             if (this.MethodFormatOption == MethodFormat.Full)
             {
-                testcaseElement.SetAttributeValue("name", namespaceClass + "." + result.Name);
+                testcaseElement.SetAttributeValue("name", namespaceClass + "." + result.Method);
             }
             else if (this.MethodFormatOption == MethodFormat.Class)
             {
-                testcaseElement.SetAttributeValue("name", result.Type + "." + result.Name);
+                testcaseElement.SetAttributeValue("name", result.Type + "." + result.Method);
             }
             else
             {
-                testcaseElement.SetAttributeValue("name", result.Name);
+                testcaseElement.SetAttributeValue("name", result.Method);
             }
 
             // Ensure time value is never zero because gitlab treats 0 like its null. 0.1 micro
