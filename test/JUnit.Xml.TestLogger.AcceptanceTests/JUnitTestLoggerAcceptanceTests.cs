@@ -85,8 +85,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
                 .ToList();
 
             Assert.AreEqual(14, failures.Count());
-            Assert.IsTrue(failures.All(x => x.Descendants().Count() == 1));
-            Assert.IsTrue(failures.All(x => x.Descendants().First().Attribute("type").Value == "failure"));
+            Assert.IsTrue(failures.All(x => x.Descendants().Any(element => element.Attribute("type").Value == "failure")));
 
             // Check failures
             var skips = testcases
@@ -94,6 +93,19 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
                 .ToList();
 
             Assert.AreEqual(6, skips.Count());
+        }
+
+        [TestMethod]
+        public void TestCasesShouldContainStandardOut()
+        {
+            var node = this.resultsXml.XPathSelectElements("/testsuites/testsuite").Descendants();
+            var testcases = node.Where(x => x.Name.LocalName == "testcase").ToList();
+
+            var testCasesWithSystemOut = testcases
+                .Where(x => x.Descendants().Any(y => y.Name.LocalName == "system-out"))
+                .ToList();
+
+            Assert.AreEqual(2, testCasesWithSystemOut.Count());
         }
 
         [TestMethod]
@@ -108,7 +120,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
         }
 
         [TestMethod]
-        public void TestResultFileShouldContainErrordOut()
+        public void TestResultFileShouldContainErrorOut()
         {
             var node = this.resultsXml.XPathSelectElement("/testsuites/testsuite/system-err");
 

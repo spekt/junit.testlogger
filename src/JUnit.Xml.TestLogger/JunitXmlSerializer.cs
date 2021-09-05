@@ -307,6 +307,34 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
                 testcaseElement.Add(skippedElement);
             }
 
+            StringBuilder stdErr = new StringBuilder();
+            foreach (var m in result.Messages)
+            {
+                if (TestResultMessage.StandardErrorCategory.Equals(m.Category, StringComparison.OrdinalIgnoreCase))
+                {
+                    stdErr.AppendLine(m.Text);
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(stdErr.ToString()))
+            {
+                testcaseElement.Add(new XElement("system-err", stdErr.ToString()));
+            }
+
+            StringBuilder stdOut = new StringBuilder();
+            foreach (var m in result.Messages)
+            {
+                if (TestResultMessage.StandardOutCategory.Equals(m.Category, StringComparison.OrdinalIgnoreCase))
+                {
+                    stdOut.AppendLine(m.Text);
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(stdOut.ToString()))
+            {
+                testcaseElement.Add(new XElement("system-out", stdOut.ToString()));
+            }
+
             return testcaseElement;
         }
 
