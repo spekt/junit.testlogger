@@ -225,7 +225,6 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
             // single newline.
             var element = new XElement(
                 "testsuite",
-                new XElement("properties"),
                 testCaseElements,
                 new XElement("system-out", stdOut.ToString()),
                 new XElement("system-err", stdErr.ToString()));
