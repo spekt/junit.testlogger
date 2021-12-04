@@ -59,7 +59,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
             Assert.AreEqual("52", node.Attribute(XName.Get("tests")).Value);
             Assert.AreEqual("14", node.Attribute(XName.Get("failures")).Value);
-            Assert.AreEqual("6", node.Attribute(XName.Get("skipped")).Value);
+            Assert.AreEqual("8", node.Attribute(XName.Get("skipped")).Value);
 
             // Errors is zero becasue we don't get errors as a test outcome from .net
             Assert.AreEqual("0", node.Attribute(XName.Get("errors")).Value);
@@ -93,7 +93,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
                 .Where(x => x.Descendants().Any(y => y.Name.LocalName == "skipped"))
                 .ToList();
 
-            Assert.AreEqual(6, skips.Count());
+            Assert.AreEqual(8, skips.Count());
         }
 
         [TestMethod]
