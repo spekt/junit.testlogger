@@ -143,7 +143,8 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
             foreach (var testcase in testcases)
             {
-                var parsedName = new TestCaseNameParser().Parse(testcase.Attribute("name").Value);
+                // Note the new parser can't handle the names with just class.method
+                var parsedName = new LegacyTestCaseNameParser().Parse(testcase.Attribute("name").Value);
 
                 // If the name is parsable into two pieces, then we have a two piece name and
                 // consider that to be a passing result.
