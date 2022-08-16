@@ -22,6 +22,8 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
 
         public const string FailureBodyFormatKey = "FailureBodyFormat";
 
+        public const string SkipSystemOutKey = "SkipSystemOut";
+
         private const string ResultStatusPassed = "Passed";
         private const string ResultStatusFailed = "Failed";
 
@@ -220,6 +222,16 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
                 stdErr.AppendLine($"{m.Level} - {m.Message}");
             }
 
+            var systemOutContent = stdOut.ToString();
+            if (loggerConfiguration.Values.TryGetValue(SkipSystemOutKey, out string systemOut))
+            {
+                if (string.Equals(systemOut.Trim(), "True", StringComparison.OrdinalIgnoreCase))
+                {
+                    systemOutContent = "";
+                }
+            }
+            var systemOutElement = new XElement("system-out", systemOutContent);
+
             // Adding required properties, system-out, and system-err elements in the correct
             // positions as required by the xsd. In system-out collapse consequtive newlines to a
             // single newline.
@@ -227,7 +239,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
                 "testsuite",
                 new XElement("properties"),
                 testCaseElements,
-                new XElement("system-out", stdOut.ToString()),
+                systemOutElement,
                 new XElement("system-err", stdErr.ToString()));
 
             element.SetAttributeValue("name", Path.GetFileName(results.First().AssemblyPath));

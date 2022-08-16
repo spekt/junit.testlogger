@@ -180,5 +180,53 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
 
             Assert.IsTrue(new JunitXmlValidator().IsValid(resultsXml));
         }
+
+        [TestMethod]
+        public void SkipSystemOut_Default_ShouldContainSystemOutElement()
+        {
+            DotnetTestFixture.Execute("failure-default-test-results.xml");
+            string resultsFile = Path.Combine(DotnetTestFixture.RootDirectory, "failure-default-test-results.xml");
+            XDocument resultsXml = XDocument.Load(resultsFile);
+
+            var systemOuts = resultsXml.XPathSelectElements("/testsuites/testsuite")
+                .Descendants()
+                .Where(x => x.Name.LocalName == "system-out")
+                .ToList();
+
+            foreach (var systemOut in systemOuts)
+            {
+                // Strip new line and carrige return. These may be inconsistent depending on
+                // environment settings
+                var message = systemOut.Value.Replace("\r", string.Empty).Replace("\n", string.Empty);
+
+                Assert.IsFalse(String.IsNullOrEmpty(message));
+            }
+
+            Assert.IsTrue(new JunitXmlValidator().IsValid(resultsXml));
+        }
+
+        [TestMethod]
+        public void SkipSystemOut_Default_ShouldntContainContentInSystemOutElement()
+        {
+            DotnetTestFixture.Execute("failure-default-test-results.xml;SkipSystemOut=True");
+            string resultsFile = Path.Combine(DotnetTestFixture.RootDirectory, "failure-default-test-results.xml");
+            XDocument resultsXml = XDocument.Load(resultsFile);
+
+            var systemOuts = resultsXml.XPathSelectElements("/testsuites/testsuite")
+                .Descendants()
+                .Where(x => x.Name.LocalName == "system-out")
+                .ToList();
+
+            foreach (var systemOut in systemOuts)
+            {
+                // Strip new line and carrige return. These may be inconsistent depending on
+                // environment settings
+                var message = systemOut.Value.Replace("\r", string.Empty).Replace("\n", string.Empty);
+
+                Assert.IsTrue(String.IsNullOrEmpty(message));
+            }
+
+            Assert.IsTrue(new JunitXmlValidator().IsValid(resultsXml));
+        }
     }
 }
