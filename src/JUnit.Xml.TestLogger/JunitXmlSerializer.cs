@@ -227,7 +227,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
             {
                 if (string.Equals(systemOut.Trim(), "True", StringComparison.OrdinalIgnoreCase))
                 {
-                    systemOutContent = "";
+                    systemOutContent = string.Empty;
                 }
             }
             var systemOutElement = new XElement("system-out", systemOutContent);
