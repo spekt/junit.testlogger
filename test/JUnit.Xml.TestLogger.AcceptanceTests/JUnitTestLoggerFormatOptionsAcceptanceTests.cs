@@ -199,7 +199,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
                 // environment settings
                 var message = systemOut.Value.Replace("\r", string.Empty).Replace("\n", string.Empty);
 
-                Assert.IsFalse(String.IsNullOrEmpty(message));
+                Assert.IsFalse(string.IsNullOrEmpty(message));
             }
 
             Assert.IsTrue(new JunitXmlValidator().IsValid(resultsXml));
@@ -223,7 +223,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
                 // environment settings
                 var message = systemOut.Value.Replace("\r", string.Empty).Replace("\n", string.Empty);
 
-                Assert.IsTrue(String.IsNullOrEmpty(message));
+                Assert.IsTrue(string.IsNullOrEmpty(message));
             }
 
             Assert.IsTrue(new JunitXmlValidator().IsValid(resultsXml));
