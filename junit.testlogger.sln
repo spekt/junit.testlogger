@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.4.33213.308
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DB72843C-27A3-4646-BE18-164E33702212}"
 EndProject
@@ -16,8 +16,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JUnit.Xml.TestLogger.AcceptanceTests", "test\JUnit.Xml.TestLogger.AcceptanceTests\JUnit.Xml.TestLogger.AcceptanceTests.csproj", "{A47EDBAD-CF86-4F2D-9CE6-02510954CE10}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JUnit.Xml.TestLogger.UnitTests", "test\JUnit.Xml.TestLogger.UnitTests\JUnit.Xml.TestLogger.UnitTests.csproj", "{FC0600B1-5E2E-4C19-AFD9-BF418A739E17}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestLogger", "..\testlogger\src\TestLogger\TestLogger.csproj", "{CD867E36-A8B7-431A-8D8F-401A323C7DFC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,18 +87,6 @@ Global
 		{FC0600B1-5E2E-4C19-AFD9-BF418A739E17}.Release|x64.Build.0 = Release|Any CPU
 		{FC0600B1-5E2E-4C19-AFD9-BF418A739E17}.Release|x86.ActiveCfg = Release|Any CPU
 		{FC0600B1-5E2E-4C19-AFD9-BF418A739E17}.Release|x86.Build.0 = Release|Any CPU
-		{CD867E36-A8B7-431A-8D8F-401A323C7DFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD867E36-A8B7-431A-8D8F-401A323C7DFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD867E36-A8B7-431A-8D8F-401A323C7DFC}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{CD867E36-A8B7-431A-8D8F-401A323C7DFC}.Debug|x64.Build.0 = Debug|Any CPU
-		{CD867E36-A8B7-431A-8D8F-401A323C7DFC}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{CD867E36-A8B7-431A-8D8F-401A323C7DFC}.Debug|x86.Build.0 = Debug|Any CPU
-		{CD867E36-A8B7-431A-8D8F-401A323C7DFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD867E36-A8B7-431A-8D8F-401A323C7DFC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD867E36-A8B7-431A-8D8F-401A323C7DFC}.Release|x64.ActiveCfg = Release|Any CPU
-		{CD867E36-A8B7-431A-8D8F-401A323C7DFC}.Release|x64.Build.0 = Release|Any CPU
-		{CD867E36-A8B7-431A-8D8F-401A323C7DFC}.Release|x86.ActiveCfg = Release|Any CPU
-		{CD867E36-A8B7-431A-8D8F-401A323C7DFC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
