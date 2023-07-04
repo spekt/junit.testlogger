@@ -1,0 +1,44 @@
+name: .NET
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      APP_BUILD_VERSION: ${{ format('3.1.{0}', github.run_number) }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET 7.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 7.0.x
+      - name: Setup .NET 3.1.x
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "3.1.x"
+      - name: Package (debug)
+        run: dotnet pack -p:PackageVersion=${{ env.APP_BUILD_VERSION }}
+      - name: Package (release)
+        run: dotnet pack -c Release -p:PackageVersion=${{ env.APP_BUILD_VERSION }}
+      - name: Unit test
+        run: dotnet test -p:PackageVersion=${{ env.APP_BUILD_VERSION }} test/JUnit.Xml.TestLogger.UnitTests/JUnit.Xml.TestLogger.UnitTests.csproj -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
+      - name: Acceptance test
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: dotnet test -p:PackageVersion=${{ env.APP_BUILD_VERSION }} test/JUnit.Xml.TestLogger.AcceptanceTests/JUnit.Xml.TestLogger.AcceptanceTests.csproj
+      - name: Codecov
+        uses: codecov/codecov-action@v3.1.0
+        with:
+          files: test/JUnit.Xml.TestLogger.UnitTests/coverage.opencover.xml
+      - name: Publish packages
+        if: ${{ github.event_name == 'push' && matrix.os == 'windows-latest' }}
+        run: |
+          dotnet nuget push 'src/package/bin/Release/*.nupkg' --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/spekt/index.json
+          dotnet nuget push 'src/package/bin/Release/*.nupkg' --api-key ${{ secrets.SPEKT_MYGET_KEY }} --source https://www.myget.org/F/spekt/api/v3/index.json
