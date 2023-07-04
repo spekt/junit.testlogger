@@ -56,6 +56,8 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
             Verbose,
         }
 
+        public IInputSanitizer InputSanitizer { get; } = new InputSanitizerXml();
+
         public MethodFormat MethodFormatOption { get; private set; } = MethodFormat.Default;
 
         public FailureBodyFormat FailureBodyFormatOption { get; private set; } = FailureBodyFormat.Default;
