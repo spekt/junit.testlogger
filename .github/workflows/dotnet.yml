@@ -40,5 +40,6 @@ jobs:
       - name: Publish packages
         if: ${{ github.event_name == 'push' && matrix.os == 'windows-latest' }}
         run: |
-          dotnet nuget push 'src/package/bin/Release/*.nupkg' --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/spekt/index.json
-          dotnet nuget push 'src/package/bin/Release/*.nupkg' --api-key ${{ secrets.SPEKT_MYGET_KEY }} --source https://www.myget.org/F/spekt/api/v3/index.json
+          $packageFile = (Get-ChildItem src/package/bin/Release/*.nupkg).FullName
+          dotnet nuget push "$packageFile" --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/spekt/index.json
+          dotnet nuget push "$packageFile" --api-key ${{ secrets.SPEKT_MYGET_KEY }} --source https://www.myget.org/F/spekt/api/v3/index.json
