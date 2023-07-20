@@ -4,7 +4,7 @@ GitLab uses just a few pieces of the XML report to generate the displayed user i
 
 ## Default Display
 
-The summary view shows passing and failing tests by method name (including any parameters). GitLab generates its summary of New failing tests, existing failing tests, and newly passing tests based on this string. 
+The summary view shows passing and failing tests by method name (including any parameters). GitLab generates its summary of New failing tests, existing failing tests, and newly passing tests based on this string.
 
 ![Default Test Summary](assets/gitlab-test-summary-with-default-option.png)
 
@@ -14,7 +14,7 @@ The popup displayed when clicking on a test, shows only the body of the failure.
 
 ## Improved Output With Formatting Options
 
-The test summary can be modified by setting the method format. The option below used 'MethodFormat=Class'. This can be particularly helpful when using test fixture data (i.e. there are paramters passed to the class) which you would like to display.
+The test summary can be modified by setting the method format. The option below used 'MethodFormat=Class'. This can be particularly helpful when using test fixture data (i.e. there are parameters passed to the class) which you would like to display.
 
 ![Test Summary with Class Option](assets/gitlab-test-summary-with-class-option.png)
 
@@ -38,7 +38,7 @@ Test:
     reports:
       junit: 
        - .\artifacts\*test-result.xml
-```       
+```
 
 ## Notes
 
