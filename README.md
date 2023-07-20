@@ -83,7 +83,7 @@ We recommend this option for [GitLab](/docs/gitlab-recommendation.md) users.
 
 When set to default, the body of a `failure` element will contain only the exception which is captured by vstest. Verbose will prepend the body with 'Expected X, Actual Y' similar to how it is displayed in the standard test output. 'Expected X, Actual Y' are normally only contained in the failure message. Additionally, Verbose will include standard output from the test in the failure message.
 
-We recommend this option for [GitLab](/docs/gitlab-recommendation.md) users.
+We recommend this option for [GitLab](/docs/gitlab-recommendation.md) and [CircleCI](/docs/circleci-recommendation.md) users.
 
 ##### Allowed Values
 
