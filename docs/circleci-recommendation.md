@@ -13,13 +13,7 @@
 ## Details
 
 CircleCI uses just a few pieces of the JUnit XML report to generate the displayed user interface.
-<!--
-Maintenance note:
-Findings as of July 20 2023.
- - Only data in a <testcase> element is shown.
- - e.g. <system-out> from a <testcase> is shown.
- - The logger only puts console text (<system-out> and <system-err>) in the <testsuite> level (not into <testcase>) so CircleCI ignores it.
--->
+
 For each failed test (i.e. for each JUnit `<testcase>` element containing a failure or an error),
 CircleCI only shows the testcase's failure/error message, any text within the failure/error element, plus any `<system-out>` or `<system-err>` text.
 It does not show the testcase's properties.
@@ -55,3 +49,34 @@ CircleCI shows the class names of each failed test so setting `MethodFormat=Clas
 - `Class` and `Full`:
 
   ![MethodFormat Class](assets/circleci-test-collapsed-with-methodname-class.png)
+
+-----
+
+## Footnote
+
+As of July 20 2023:
+
+- Only the data in a `<testcase>` element is shown on the CircleCI WebUI.
+  - e.g. `<system-out>` from within a `<testcase>` is shown.
+- Data outside of a `<testcase>` element is not shown on the CircleCI WebUI.
+- The `<properties>` from a `<testcase>` aren't shown on the CircleCI WebUI.
+- By default, the logger only puts console text (`<system-out>` and `<system-err>`) in elements at the `<testsuite>` level (not into `<testcase>`) so CircleCI ignores it.
+
+e.g.
+
+```xml
+<testsuites>
+  <testsuite>
+    <testcase name="Displayed in bold on the CircleCI WebUI" classname="Also shown" time="Used but not displayed">
+      <properties>
+        <property name="CircleCI" value="Does not show these" />
+      </properties>
+      <failure message="This scan be seen in CircleCI">So can this</failure>
+      <system-out>This is also shown by CircleCI<system-out>
+      <system-err>Same for system-err too</system-err>
+    </testcase>
+    <system-out>CircleCI ignores data here</system-out>
+    <system-err>Same for system-err too</system-err>
+  </testsuite>
+</testsuites>
+```
