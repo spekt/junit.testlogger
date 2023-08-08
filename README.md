@@ -26,13 +26,16 @@ To use the logger, follow these steps:
 
 1. Add a reference to the [JUnit Logger](https://www.nuget.org/packages/JUnitXml.TestLogger) nuget package in test project
 2. Use the following command line in tests
-```
-> dotnet test --logger:junit
-```
+
+   ```none
+   > dotnet test --logger:junit
+   ```
+
 3. Test results are generated in the `TestResults` directory relative to the `test.csproj`
 
 A path for the report file can be specified as follows:
-```
+
+```none
 > dotnet test --logger:"junit;LogFilePath=test-result.xml"
 ```
 
@@ -43,7 +46,7 @@ A path for the report file can be specified as follows:
 All common options to the logger are documented [in the wiki][config-wiki]. E.g.
 token expansion for `{assembly}` or `{framework}` in result file. If you are writing multiple
 files to the same directory or testing multiple frameworks, these options can prevent
-test logs from over-writing eachother.
+test logs from over-writing each other.
 
 [config-wiki]: https://github.com/spekt/testlogger/wiki/Logger-Configuration
 
@@ -54,19 +57,19 @@ provide additional control over the xml file so that the logged test results can
 
 Platform Specific Recommendations:
 
-- [GitLab CI/CD Recomendation](/docs/gitlab-recommendation.md)
-- [Jenkins Recomendation](/docs/jenkins-recommendation.md) 
-- [CircleCI Recomendation](/docs/circleci-recommendation.md)
+- [GitLab CI/CD Recommendation](/docs/gitlab-recommendation.md)
+- [Jenkins Recommendation](/docs/jenkins-recommendation.md)
+- [CircleCI Recommendation](/docs/circleci-recommendation.md)
 
 After the logger name, command line arguments are provided as key/value pairs with the following general format. **Note** the quotes are required and key names are case sensitive.
 
-```
+```none
 > dotnet test --test-adapter-path:. --logger:"junit;key1=value1;key2=value2"
 ```
 
 #### MethodFormat
 
-This option alters the `testcase name` attribute. By default, this contains only the method. Class, will add the class to the name. Full, will add the assembly/namespace/class to the method. 
+This option alters the `testcase name` attribute. By default, this contains only the method. Class, will add the class to the name. Full, will add the assembly/namespace/class to the method.
 
 We recommend this option for [GitLab](/docs/gitlab-recommendation.md) users.
 
@@ -78,9 +81,9 @@ We recommend this option for [GitLab](/docs/gitlab-recommendation.md) users.
 
 #### FailureBodyFormat
 
-When set to default, the body of a `failure` element will contain only the exception which is captured by vstest. Verbose will prepend the body with 'Expected X, Actual Y' similar to how it is displayed in the standard test output. 'Expected X, Actual Y' are normally only contained in the failure message. Additionally, Verbose will include standard output from the test in the failure message. 
+When set to default, the body of a `failure` element will contain only the exception which is captured by vstest. Verbose will prepend the body with 'Expected X, Actual Y' similar to how it is displayed in the standard test output. 'Expected X, Actual Y' are normally only contained in the failure message. Additionally, Verbose will include standard output from the test in the failure message.
 
-We recommend this option for [GitLab](/docs/gitlab-recommendation.md) users.
+We recommend this option for [GitLab](/docs/gitlab-recommendation.md) and [CircleCI](/docs/circleci-recommendation.md) users.
 
 ##### Allowed Values
 
