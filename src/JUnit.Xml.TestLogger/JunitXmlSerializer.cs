@@ -22,6 +22,8 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
 
         public const string FailureBodyFormatKey = "FailureBodyFormat";
 
+        public const string SkipSystemOutKey = "SkipSystemOut";
+
         private const string ResultStatusPassed = "Passed";
         private const string ResultStatusFailed = "Failed";
 
@@ -61,6 +63,8 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
         public MethodFormat MethodFormatOption { get; private set; } = MethodFormat.Default;
 
         public FailureBodyFormat FailureBodyFormatOption { get; private set; } = FailureBodyFormat.Default;
+
+        public bool SkipSystemOutOption { get; private set; } = false;
 
         public static IEnumerable<TestSuite> GroupTestSuites(IEnumerable<TestSuite> suites)
         {
@@ -222,6 +226,12 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
                 stdErr.AppendLine($"{m.Level} - {m.Message}");
             }
 
+            var systemOutContent = stdOut.ToString();
+            if (this.SkipSystemOutOption)
+            {
+                systemOutContent = string.Empty;
+            }
+
             // Adding required properties, system-out, and system-err elements in the correct
             // positions as required by the xsd. In system-out collapse consequtive newlines to a
             // single newline.
@@ -229,7 +239,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
                 "testsuite",
                 new XElement("properties"),
                 testCaseElements,
-                new XElement("system-out", stdOut.ToString()),
+                new XElement("system-out", systemOutContent),
                 new XElement("system-err", stdErr.ToString()));
 
             element.SetAttributeValue("name", Path.GetFileName(results.First().AssemblyPath));
@@ -352,6 +362,22 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Junit.Xml.TestLogger
                 else
                 {
                     Console.WriteLine($"JunitXML Logger: The provided Failure Body Format '{failureFormat}' is not a recognized option. Using default");
+                }
+            }
+
+            if (loggerConfiguration.Values.TryGetValue(SkipSystemOutKey, out string systemOut))
+            {
+                if (string.Equals(systemOut.Trim(), "True", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.SkipSystemOutOption = true;
+                }
+                else if (string.Equals(systemOut.Trim(), "False", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.SkipSystemOutOption = false;
+                }
+                else
+                {
+                    Console.WriteLine($"JunitXML Logger: The provided SkipSystemOut value '{systemOut}' is not a recognized option. Using default (false)");
                 }
             }
         }
