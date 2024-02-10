@@ -14,6 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\JUnit.Xml.TestLogger\Assembly.cs" Link="Assembly.cs" />
     <Compile Include="..\JUnit.Xml.TestLogger\JunitXmlSerializer.cs" Link="JunitXmlSerializer.cs" />
     <Compile Include="..\JUnit.Xml.TestLogger\JUnitXmlTestLogger.cs" Link="JUnitXmlTestLogger.cs" />
   </ItemGroup>
