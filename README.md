@@ -1,3 +1,7 @@
+> [!IMPORTANT]  
+> Development of v4.x and subsequent versions of the Junit logger is moved to the [testlogger](https://github.com/spekt/testlogger) repository.
+> Kindly report any new issues or contribute your patches in that repo.
+
 # JUnit Test Logger
 
 JUnit xml report extension for [Visual Studio Test Platform](https://github.com/microsoft/vstest).
