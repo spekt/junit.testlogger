@@ -94,6 +94,16 @@ We recommend this option for [GitLab](/docs/gitlab-recommendation.md) and [Circl
 - FailureBodyFormat=Default
 - FailureBodyFormat=Verbose
 
+#### SkipSystemOut
+
+When set to false, the text of a `system-out` element will include standard output from the test execution.
+Otherwise, it will be empty.
+
+##### Allowed Values
+
+- SkipSystemOut=True
+- SkipSystemOut=False
+
 ## License
 
 MIT
