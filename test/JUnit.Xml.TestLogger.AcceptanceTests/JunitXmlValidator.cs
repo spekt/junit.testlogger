@@ -25,7 +25,7 @@ namespace JUnit.Xml.TestLogger.AcceptanceTests
             var xmlReader = new StringReader(xml);
             var xsdReader = new StringReader(
                 File.ReadAllText(
-                    Path.Combine("..", "..", "..", "..", "assets", "JUnit.xsd")));
+                    Path.Combine("..", "..", "..", "..", "assets", "jenkins-junit.xsd")));
 
             var schema = XmlSchema.Read(
                 xsdReader,
