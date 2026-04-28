@@ -3,7 +3,7 @@
   <PropertyGroup>
     <MSTestVersion>2.0.0</MSTestVersion>
     <NETTestSdkVersion>15.7.2</NETTestSdkVersion>
-    <MoqVersion>4.9.0</MoqVersion>
+    <MoqVersion>4.20.72</MoqVersion>
     <TestLoggerVersion>3.1.140</TestLoggerVersion>
 
     <!-- Test Assets use the minimum supported versions -->
